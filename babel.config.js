@@ -1,17 +1,7 @@
 module.exports = function (api) {
-    api.cache(true);
-    return {
-      presets: ['babel-preset-expo'],
-    };
+  api.cache(true);
+  return {
+    presets: ['babel-preset-expo'], // Only one 'presets' key
+    plugins: ['nativewind/babel'], // Includes NativeWind plugin
   };
-  
-  /** @type {import('tailwindcss').Config} */
-module.exports = {
-    // NOTE: Update this to include the paths to all of your component files.
-    content: ["./app/**/*.{js,jsx,ts,tsx}"],
-    presets: [require("nativewind/preset")],
-    theme: {
-      extend: {},
-    },
-    plugins: [],
-  }
+};

@@ -13,25 +13,49 @@ import Loading from '../components/Loading.jsx';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Feather from '@expo/vector-icons/Feather';
 import CustomKeyboardView from '../components/CustomKeyboardView.jsx'
+import { supabase } from '../lib/supabase.ts'
 
 export default function SignUp() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
 
-  const emailRef = useRef('')
-  const passwordRef = useRef('')
-  const userNameRef = useRef('')
-  const profileRef = useRef('')
+  const emailRef = useRef(null)
+  const passwordRef = useRef(null)
+  const userNameRef = useRef(null)
 
 
 
   const handleRegister = async () => {
-      if (!emailRef.current || !passwordRef.current || !userNameRef.current || !profileRef.current){
+      if (!emailRef.current || !passwordRef.current || !userNameRef.current ){
         Alert.alert('Đăng ký','Vui lòng nhập đầy đủ thông tin.')
         return
       }
 
+      let userName = userNameRef.current.trim()
+      let email = emailRef.current.trim()
+      let password = passwordRef.current.trim()
 
+      setLoading(true)
+
+      const {data: {session}, error} = await supabase.auth.signUp(
+        {
+          email,
+          password,
+          options:
+            {
+              data: {
+                userName,
+              }
+            }
+      }
+      )
+
+      setLoading(false)
+
+
+      if (error){
+        Alert.alert('Đăng ký', error.message)
+      }
   }
 
     return (
@@ -92,17 +116,6 @@ export default function SignUp() {
                       placeholder='Mật khẩu'
                       placeholderTextColor={'grey'}
                       secureTextEntry={true}
-                    />
-                  </View>
-
-                  <View style={{ height: hp(7) }} className="ml-3 mr-3 items-center rounded-lg flex-row bg-lightgrey">
-                    <Feather className="p-4" name='image' size={24} color="black" />
-                    <TextInput 
-                      onChangeText={value => profileRef.current = value}
-                      style={{ fontSize: hp(2) }}
-                      className="flex-1 font-semibold text-neutral-700 p-3"
-                      placeholder='Hình đại diện'
-                      placeholderTextColor={'grey'}
                     />
                   </View>
 

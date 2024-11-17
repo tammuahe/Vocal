@@ -11,19 +11,37 @@ import { useRouter } from 'expo-router'
 import { MaterialIcons } from '@expo/vector-icons';
 import Loading from '../components/Loading.jsx';
 import CustomKeyboardView from '../components/CustomKeyboardView.jsx'
+import { supabase } from '../lib/supabase.ts';
 
 
 export default function SignIn() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
 
-  const emailRef = useRef('')
-  const passwordRef = useRef('')
+  const emailRef = useRef(null)
+  const passwordRef = useRef(null)
 
   const handleLogin = async () => {
       if (!emailRef.current || !passwordRef.current){
         Alert.alert('Đăng nhập','Vui lòng nhập đầy đủ thông tin.')
         return
+      }
+      
+      let email = emailRef.current.trim()
+      let password = passwordRef.current.trim()
+
+      setLoading(true)
+      const {error} = await supabase.auth.signInWithPassword(
+        {
+          email,
+          password
+        }
+      )
+
+      setLoading(false)
+
+      if (error.message.includes('Invalid')){
+        Alert.alert('Đăng nhập', 'Thông tin đăng nhập không đúng.')
       }
 
 

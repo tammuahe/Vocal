@@ -6,8 +6,13 @@ module.exports = {
   theme: {
     extend: {
       colors:{
-        skyblue: '#A9C6FA',
-        lightgrey:'#eae8e8'
+        skyblue: '#A7C8F2',
+        lightgrey:'#EAE8E8',
+        darkerblue: '#99BFF2',
+        darkblue: '#428DF0',
+        lightred: '#FBA7A7',
+        darkerred: '#F98686',
+        darkred: '#F86565',
       }
     },
   },

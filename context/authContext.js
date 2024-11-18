@@ -1,5 +1,5 @@
 import { Children, createContext, useContext, useEffect, useState } from "react";
-
+import { supabase } from "@/lib/supabase";
 export const AuthContext = createContext()
 
 export const AuthContextProvider = ({children}) => {
@@ -17,7 +17,10 @@ export const AuthContextProvider = ({children}) => {
 
     const login = async (email, password) => {
         try{
-
+            supabase.auth.signInWithPassword({
+                email,
+                password,
+            })
         }
         catch(e){
 

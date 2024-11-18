@@ -2,28 +2,36 @@ import { Slot, useSegments, useRouter } from "expo-router";
 import "../global.css";
 import { useAuth, AuthContextProvider } from "@/context/authContext";
 import React, { useEffect } from "react";
+import { supabase } from '../lib/supabase'
 
 const MainLayout = () => {
-  const {isAuthenticated} = useAuth();
+  const {setAuth} = useAuth();
   const segments = useSegments();
   const router = useRouter();
 
   useEffect(() => {
-    if (typeof isAuthenticated == 'undefined') return;
-    const inApp = segments[0] == '(app)';
-    if (isAuthenticated && !inApp){
-        //redirect to home
-        router.replace("/home");
-    } else if (isAuthenticated==false){
-      // redirect to signIn
-        router.replace('/signIn');
-    }
-  }, [isAuthenticated])
+    supabase.auth.onAuthStateChange((_event, session) => {
+      console.log('session user:', session?.user.id)
+
+      if(session){
+        setAuth(session?.user)
+        router.replace('/home')
+      }
+      else{
+        setAuth(null)
+        router.replace('/signIn')
+      }
+    })
+  },[])
+
+
 
   return <Slot />;
 }
 
-export default function RootLayout() {
+export default function _layout() {
+
+
   return(
   <AuthContextProvider>
     <MainLayout />

@@ -6,7 +6,7 @@ export default function CustomKeyboardView({children}){
         <KeyboardAvoidingView
             behavior={ios? 'padding':'height'}
             style={{ flex: 1 }}
-            keyboardVerticalOffset={150}
+            keyboardVerticalOffset={50}
         >
             <ScrollView
                 style={{flex:1}}

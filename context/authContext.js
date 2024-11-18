@@ -1,16 +1,18 @@
 import { Children, createContext, useContext, useEffect, useState } from "react";
 
-export const AuthContext = createContext(undefined)
+export const AuthContext = createContext()
 
 export const AuthContextProvider = ({children}) => {
     const [user, setUser] = useState(null);
-    const [isAuthenticated, setIsAuthenticated] = useState(undefined);
+    const [isAuthenticated, setIsAuthenticated] = useState(true);
 
-    useEffect(()=>{
-            //onAuthStateChanged
-            setIsAuthenticated(false)
-        },[])
+    const setAuth = authUser => {
+        setUser(authUser)
+    }
 
+    const setUserData = userData => {
+        setUser({...userData})
+    }
 
 
     const login = async (email, password) => {
@@ -42,7 +44,7 @@ export const AuthContextProvider = ({children}) => {
     }
 
     return (
-        <AuthContext.Provider value={{user, isAuthenticated, login, register, logout}}>
+        <AuthContext.Provider value={{user, setAuth, setUserData, login, register, logout}}>
             {children}
         </AuthContext.Provider>
     )

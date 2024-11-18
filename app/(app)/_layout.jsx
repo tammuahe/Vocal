@@ -1,9 +1,17 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { Stack } from 'expo-router'
+
+import HomeHeader from '@/components/HomeHeader.jsx'
+
 export default function _layout() {
- {
     return (
-      <Stack />
-    )
-  }
+      <Stack>
+        <Stack.Screen
+          name='home' 
+          options={{
+            header: () => <HomeHeader />
+          }}
+          />
+      </Stack>
+    ) 
 }

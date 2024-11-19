@@ -2,7 +2,7 @@
 Đây là project cuối kì của lớp Công nghệ phần mềm - trường Đại học Thăng Long
 
 ## Thành viên
-A44249 - Nguyễn Đức Tâm - dev
+A44249 - Nguyễn Đức Tâm - PO, dev
 A43252 - Nguyễn Ngọc Biển - Tester
 A44627 - Nguyễn Thị Bảo ngọc - BA, designer
 A41944 - Nguyễn Huy Cường - Designer

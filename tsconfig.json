@@ -13,6 +13,13 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
-    "utils/nativewind-env.d.ts"
-, "context/authContext.js", "app/(app)/_layout.jsx", "context/authContext.js", "app/_layout.js", "components/LoginInputField.jsx", "app/signIn.jsx"  ]
+    "utils/nativewind-env.d.ts",
+    "context/authContext.js",
+    "app/(app)/_layout.jsx",
+    "context/authContext.js",
+    "app/_layout.js",
+    "components/LoginInputField.jsx",
+    "app/signIn.jsx",
+    "nativewind-env.d.ts"
+  ]
 }

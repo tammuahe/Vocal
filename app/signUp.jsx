@@ -10,14 +10,14 @@ import SubmitButton from '../components/SubmitButton.jsx'
 import { useRouter } from 'expo-router'
 import { MaterialIcons } from '@expo/vector-icons';
 import Loading from '../components/Loading.jsx';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import FontAwesome from '@expo/vector-icons/FontAwesome5';
 import CustomKeyboardView from '../components/CustomKeyboardView.jsx'
 import { supabase } from '../lib/supabase.ts'
 import { useAuth } from '../context/authContext.js'
 
 export default function SignUp() {
   const router = useRouter()
-  const{ register } = useAuth()
+  const { register } = useAuth()
   const [loading, setLoading] = useState(false)
 
   const emailRef = useRef(null)
@@ -32,19 +32,24 @@ export default function SignUp() {
         return
       }
 
-
       setLoading(true)
 
-      let response = await register(emailRef.current.trim(), passwordRef.current.trim(), userNameRef.current.trim())
+      let { error } = await register(emailRef.current.trim(), passwordRef.current.trim(), userNameRef.current.trim())
 
       setLoading(false)
 
-      console.log(response)
-
-      if (error){
-        Alert.alert('Đăng ký', error.message)
+      if (error) {
+        if (error.message.includes('Password should be at least 6 characters')){
+          Alert.alert('Đăng ký', 'Mật khẩu phải dài ít nhất 6 kí tự')
+        }
+        else if (error.message.includes('Unable to validate email address: invalid format')){
+          Alert.alert('Đăng ký', 'Email sai định dạng')
+        }
+        else{
+          Alert.alert('Đăng ký', 'Đăng ký thất bại. Vui lòng thử lại sau.')
+        }
       }
-      return
+
   }
 
     return (
@@ -74,7 +79,7 @@ export default function SignUp() {
                 <View className='gap-4 m-3'>
                   
                   <View style={{ height: hp(7) }} className="ml-3 mr-3 items-center rounded-lg flex-row bg-lightgrey">
-                    <FontAwesome5 className="p-4" name='user' size={24} color="black" />
+                    <FontAwesome className="p-4" name='user' size={24} color="black" />
                     <TextInput 
                       onChangeText={value => userNameRef.current = value}
                       style={{ fontSize: hp(2) }}

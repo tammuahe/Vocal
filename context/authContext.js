@@ -1,5 +1,6 @@
-import { Children, createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { Alert } from "react-native";
 export const AuthContext = createContext()
 
 export const AuthContextProvider = ({children}) => {
@@ -34,15 +35,11 @@ export const AuthContextProvider = ({children}) => {
 
 
     const login = async (email, password) => {
-        try{
-            supabase.auth.signInWithPassword({
-                email,
-                password,
-            })
-        }
-        catch(e){
-
-        }
+        const {error} = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        })
+        return {error}
     }
 
 
@@ -57,7 +54,7 @@ export const AuthContextProvider = ({children}) => {
     }
 
     const register = async (email, password, username) => {
-        const {data: {session}, error} = await supabase.auth.signUp(
+        const {error} = await supabase.auth.signUp(
             {
               email,
               password,
@@ -69,7 +66,7 @@ export const AuthContextProvider = ({children}) => {
                 }
             }
         )
-        return {data}
+        return {error}
     }
 
     return (

@@ -59,7 +59,7 @@ export default function HomeHeader() {
                         <Image
                         style={{height: hp(4.5), aspectRatio: 1, borderRadius: 100}}
                         source={{uri: avatarUrl}}
-                        //placeholder={{ blurhash }}
+                        placeholder={{ blurhash }}
                         transition={100}
                         contentFit='cover'
                         />

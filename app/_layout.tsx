@@ -34,11 +34,9 @@ export default function _layout() {
 
 
   return(
-  <MenuProvider>
     <AuthContextProvider>
       <MainLayout />
     </AuthContextProvider>
-  </MenuProvider>
   )
     
 }

@@ -24,6 +24,7 @@ export default function HomeHeader() {
             const { data, error } = await supabase
                 .from('profiles')
                 .select('profile_picture')
+                .eq('id', user.id)
                 .single()
 
             if (error) {
@@ -41,8 +42,6 @@ export default function HomeHeader() {
         fetchAvatar();
     }, [user]);
 
-        console.log('Fetched avatar URL: ', avatarUrl); // Logs the avatar URL after it is set
-
         const handleProfile = () => {}
 
         const handleLogout = async () => {
@@ -51,17 +50,18 @@ export default function HomeHeader() {
 
     return (
         <SafeAreaView className='p-5 flex-row justify-between bg-darkblue pb-6 rounded-b-3xl shadow'>
-            <StatusBar backgroundColor="#A9C6FA"/>
+            <StatusBar backgroundColor="#428DF0"/>
             <Text style={{fontSize: hp(3)}} className='font-medium text-white'>Cuộc trò chuyện</Text>
 
             <View>
                 <Menu>
                     <MenuTrigger>
                         <Image
-                        style={{height: hp(4.3), aspectRatio: 1, borderRadius: 100}}
-                        source={avatarUrl}
-                        placeholder={{ blurhash }}
-                        transition={500}
+                        style={{height: hp(4.5), aspectRatio: 1, borderRadius: 100}}
+                        source={{uri: avatarUrl}}
+                        //placeholder={{ blurhash }}
+                        transition={100}
+                        contentFit='cover'
                         />
                     </MenuTrigger>
                     <MenuOptions 

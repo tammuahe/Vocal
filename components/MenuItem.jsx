@@ -7,8 +7,8 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 
 export default function MenuItem({text, action, value, icon}) {
   return (
-    <MenuOption>
-      <View className='px-4 py-1 flex-row justify-between items-center'>
+    <MenuOption onSelect={() => {action()}}>
+      <View className='px-4 py-1 flex-row justify-between items-center' >
         <Text style={{fontSize: hp(1.7)}} className='font-semibold text-neutral-500'>{text}</Text>
         {icon}
       </View>

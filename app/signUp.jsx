@@ -1,4 +1,4 @@
-import React, { Component, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { Image, View, Text, ImageBackground, Pressable, Alert, TextInput } from 'react-native'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -11,12 +11,13 @@ import { useRouter } from 'expo-router'
 import { MaterialIcons } from '@expo/vector-icons';
 import Loading from '../components/Loading.jsx';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import Feather from '@expo/vector-icons/Feather';
 import CustomKeyboardView from '../components/CustomKeyboardView.jsx'
 import { supabase } from '../lib/supabase.ts'
+import { useAuth } from '../context/authContext.js'
 
 export default function SignUp() {
   const router = useRouter()
+  const{ register } = useAuth()
   const [loading, setLoading] = useState(false)
 
   const emailRef = useRef(null)
@@ -31,31 +32,19 @@ export default function SignUp() {
         return
       }
 
-      let userName = userNameRef.current.trim()
-      let email = emailRef.current.trim()
-      let password = passwordRef.current.trim()
 
       setLoading(true)
 
-      const {data: {session}, error} = await supabase.auth.signUp(
-        {
-          email,
-          password,
-          options:
-            {
-              data: {
-                userName,
-              }
-            }
-      }
-      )
+      let response = await register(emailRef.current.trim(), passwordRef.current.trim(), userNameRef.current.trim())
 
       setLoading(false)
 
+      console.log(response)
 
       if (error){
         Alert.alert('Đăng ký', error.message)
       }
+      return
   }
 
     return (
@@ -99,6 +88,7 @@ export default function SignUp() {
                     <MaterialIcons className="p-4" name='email' size={24} color="black" />
                     <TextInput 
                       onChangeText={value => emailRef.current = value}
+                      inputMode='email'
                       style={{ fontSize: hp(2) }}
                       className="flex-1 font-semibold text-neutral-700 p-3"
                       placeholder='Email'
@@ -110,6 +100,7 @@ export default function SignUp() {
                   <View style={{ height: hp(7) }} className="ml-3 mr-3 items-center rounded-lg flex-row bg-lightgrey">
                     <MaterialIcons className="p-4" name='password' size={24} color="black" />
                     <TextInput 
+                      textContentType='password'
                       onChangeText={value => passwordRef.current = value}
                       style={{ fontSize: hp(2) }}
                       className="flex-1 font-semibold text-neutral-700 p-3"

@@ -4,7 +4,25 @@ export const AuthContext = createContext()
 
 export const AuthContextProvider = ({children}) => {
     const [user, setUser] = useState(null);
-    const [isAuthenticated, setIsAuthenticated] = useState(true);
+    const [isAuthenticated, setIsAuthenticated] = useState(undefined);
+
+
+    useEffect(() => {
+    const {data} = supabase.auth.onAuthStateChange((event, session) => {
+      const user = session?.user;
+      if (user) {
+        setIsAuthenticated(true);
+        setUser(user);
+      } else {
+        setIsAuthenticated(false);
+        setUser(null);
+      }
+    });
+  
+    return () => {
+      data.subscription.unsubscribe()
+    };
+    }, []);
 
     const setAuth = authUser => {
         setUser(authUser)
@@ -29,21 +47,29 @@ export const AuthContextProvider = ({children}) => {
 
 
     const logout = async () => {
-        try{
-
+        const {error} = await supabase.auth.signOut()
+        if(error){
+            Alert.alert('Đăng xuất','Không thể đăng xuất.')
         }
-        catch(e){
-            
+        else{
+            setAuth(null);
         }
     }
 
-    const register = async (email, password, username, profileUrl) => {
-        try{
-
-        }
-        catch(e){
-            
-        }
+    const register = async (email, password, username) => {
+        const {data: {session}, error} = await supabase.auth.signUp(
+            {
+              email,
+              password,
+              options:
+                {
+                  data: {
+                    userName: username,
+                  }
+                }
+            }
+        )
+        return {data}
     }
 
     return (

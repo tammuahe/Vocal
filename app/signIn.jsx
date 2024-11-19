@@ -13,7 +13,6 @@ import Loading from '../components/Loading.jsx';
 import CustomKeyboardView from '../components/CustomKeyboardView.jsx'
 import { supabase } from '../lib/supabase.ts';
 
-
 export default function SignIn() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)

@@ -5,35 +5,42 @@ import { StatusBar } from 'expo-status-bar';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Loading from '@/components/Loading.jsx';
 import ChatList from '@/components/ChatList'
-import supabase from '../../lib/supabase'
+import { supabase } from '@/lib/supabase'
 export default function Home() {
   const { logout, user } = useAuth()
   const [users, setUsers] = useState([]);
+
   useEffect(() => {
-    console.log('use effect triggered')
+    //console.log('use effect triggered')
+    console.log(user)
     if(user?.id){
       getUsers()
     }
-    console.log(user)
-  },[users])
+    console.log(users)
+    
+  },[])
 
   const getUsers = async () => {
-    console.log('getUser called')
-    const { data, error } = await supabase
-      .from('friends')
-      .select('smaller_id, bigger_id')
-
-      console.log('data fetched')
-
-      if (error){
-        console.log(error)
+    try {
+      console.log('getUser called');
+      const { data, error } = await supabase
+        .from('friends')
+        .select('smaller_id, bigger_id');
+  
+      console.log('data fetched');
+  
+      if (error) {
+        console.error('Supabase error:', error);
+      } else {
+        setUsers(data);
+        console.log(data);
       }
-      else{
-        setUsers(data)
-        console.log(data)
-      }
-      console.log(users)
-  }
+      console.log(users);
+    } catch (err) {
+      console.error('Unexpected error:', err);
+    }
+  };
+  
 
   const onLogout = async () => {
     await logout()

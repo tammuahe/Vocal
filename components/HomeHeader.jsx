@@ -38,7 +38,7 @@ export default function HomeHeader() {
                 
             }
 
-            console.log(data)
+            //console.log(data)
 
             return
         };

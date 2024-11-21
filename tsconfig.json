@@ -21,5 +21,5 @@
     "components/LoginInputField.jsx",
     "app/signIn.jsx",
     "nativewind-env.d.ts"
-  ]
+, "app/(app)/home.jsx"  ]
 }

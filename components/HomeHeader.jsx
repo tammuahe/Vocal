@@ -24,7 +24,7 @@ export default function HomeHeader() {
             const { data, error } = await supabase
                 .from('profiles')
                 .select('profile_picture')
-                .eq('id', user.id)
+                .eq('uuid', user.id)
                 .single()
 
             if (error) {
@@ -37,6 +37,10 @@ export default function HomeHeader() {
                 setAvatarUrl(data.profile_picture);
                 
             }
+
+            console.log(data)
+
+            return
         };
 
         fetchAvatar();
@@ -49,19 +53,19 @@ export default function HomeHeader() {
         }
 
     return (
-        <SafeAreaView className='p-5 flex-row justify-between bg-darkblue pb-6 rounded-b-3xl shadow'>
-            <StatusBar backgroundColor="#428DF0"/>
-            <Text style={{fontSize: hp(3)}} className='font-medium text-white'>Cuộc trò chuyện</Text>
+        <SafeAreaView className='p-5 flex-row justify-between bg-lightred pb-6 rounded-b-3xl shadow'>
+            <StatusBar backgroundColor="#E9F1FC"/>
+            <Text style={{fontSize: hp(3)}} className='font-medium text-neutral-50'>Cuộc trò chuyện</Text>
 
             <View>
                 <Menu>
                     <MenuTrigger>
                         <Image
-                        style={{height: hp(4.5), aspectRatio: 1, borderRadius: 100}}
+                        style={{height: hp(4.5), width:hp(4.5), borderRadius: 100}}
                         source={{uri: avatarUrl}}
-                        placeholder={{ blurhash }}
+                        //placeholder={{ blurhash }}
                         transition={100}
-                        contentFit='cover'
+                        contentFit='scale-down'
                         />
                     </MenuTrigger>
                     <MenuOptions 

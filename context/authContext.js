@@ -9,7 +9,7 @@ export const AuthContextProvider = ({children}) => {
 
 
     useEffect(() => {
-    const {data} = supabase.auth.onAuthStateChange((event, session) => {
+    const {data} = supabase.auth.onAuthStateChange((_event, session) => {
       const user = session?.user;
       if (user) {
         setIsAuthenticated(true);

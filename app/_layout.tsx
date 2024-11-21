@@ -12,7 +12,7 @@ const MainLayout = () => {
 
   useEffect(() => {
     supabase.auth.onAuthStateChange((_event, session) => {
-
+    
       if(session){
         setAuth(session?.user)
         router.replace('/home')

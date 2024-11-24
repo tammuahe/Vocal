@@ -13,19 +13,19 @@ export default function Home() {
 
   const getConversations = async () => {
     try {
-      console.log('getConver called');
+      //console.log('getConver called');
       const { data, error } = await supabase
         .from('conversation_participants')
         .select('conversation_id')
         .eq('participant_id',user.id)
   
-      console.log('data fetched');
+      // console.log('data fetched');
   
       if (error) {
         console.error('Supabase error:', error);
       } else {
         setUsers(data);
-        console.log(data);
+        // console.log(data);
       }
       
 
@@ -36,10 +36,10 @@ export default function Home() {
   };
 
   useEffect(() => {
-    console.log('use effect triggered')
+    // console.log('use effect triggered')
     const fetchData = async () => {
         await getConversations()
-        console.log('conversation after fetch', users)
+        // console.log('conversation after fetch', users)
     }
 
     if (user){

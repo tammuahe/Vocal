@@ -3,7 +3,6 @@ import "../global.css";
 import { useAuth, AuthContextProvider } from "@/context/authContext";
 import React, { useEffect } from "react";
 import { supabase } from '../lib/supabase'
-import { MenuProvider } from 'react-native-popup-menu';
 
 const MainLayout = () => {
   const {setAuth} = useAuth();

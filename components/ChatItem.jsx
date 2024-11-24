@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Image } from 'expo-image';
 import { supabase } from '@/lib/supabase';
-
+import { useRouter } from 'expo-router';
 export default function ChatItem(item) {
   const [conversationImage, setConversationImage] = useState()
   const [participants, setParticipants] = useState([])
@@ -11,7 +11,7 @@ export default function ChatItem(item) {
   const [conversationTitle, setConversationTitle] = useState('Cuộc trò chuyện không tên') 
   const [lastTime, setLastTime] = useState('')
   const [lastMessage, setLastMessage] = useState('')
-
+  const router = useRouter()
   useEffect(() => {
     //console.log('chat item item prop', item.item.conversation_id)
 
@@ -23,7 +23,7 @@ export default function ChatItem(item) {
 
   const getConversationsPicture = async () => {
     try {
-      console.log('getConverpic called');
+      //console.log('getConverpic called');
       const { data, error } = await supabase
         .from('conversations')
         .select('conversation_picture')
@@ -43,7 +43,7 @@ export default function ChatItem(item) {
   }
 
   useEffect(()=>{
-    console.log('participants usestate', participants)
+    //console.log('participants usestate', participants)
     participants.forEach(
       async (item) => {await getParticipantsUsername(item['participant_id'])}
     )
@@ -75,9 +75,9 @@ export default function ChatItem(item) {
     }
   }, [participantsUsernames, conversationTitle]);
 
-  useEffect(() => {
-    console.log('username list: ', participantsUsernames);
-  }, [participantsUsernames]);
+  // useEffect(() => {
+  //   console.log('username list: ', participantsUsernames);
+  // }, [participantsUsernames]);
 
   const getParticipants = async () => {
     try {
@@ -104,7 +104,7 @@ export default function ChatItem(item) {
 
   const getParticipantsUsername = async (userId) => {
     try {
-      console.log('getParticipantsUsername called');
+      //console.log('getParticipantsUsername called');
       const { data, error } = await supabase
         .from('profiles')
         .select('user_name')
@@ -121,7 +121,7 @@ export default function ChatItem(item) {
             }
             return prevState;
           });
-          console.log('username fetched:', data.user_name);
+          //('username fetched:', data.user_name);
         }
       }
     } catch (err) {
@@ -145,7 +145,7 @@ export default function ChatItem(item) {
         .single()
 
       if (!error) {
-        console.log('lastime', formatDate(data['created_at']))
+        //('lastime', formatDate(data['created_at']))
         setLastTime(formatDate(data['created_at']))
       }
       
@@ -165,7 +165,7 @@ export default function ChatItem(item) {
         .single()
 
       if (!error) {
-        console.log('last mess', data['message_text'])
+        //console.log('last mess', data['message_text'])
         setLastMessage(data['message_text'])
       }
       
@@ -173,9 +173,17 @@ export default function ChatItem(item) {
       console.error('Unexpected error:', err);
     }
   }
+
+  const openInbox = () => {
+    router.push({pathname: '/inbox', param: item})
+  }
+
   return (
    
-    <TouchableOpacity className='flex-row justify-between mx-4 items-center gap-3 mb-4 p-4 border-neutral-950 overflow-hidden bg-white rounded-2xl'> 
+    <TouchableOpacity 
+    className='flex-row justify-between mx-4 items-center gap-3 mb-4 p-4 border-neutral-950 overflow-hidden bg-white rounded-2xl'
+    onPress={() => {openInbox()}}
+    > 
         <Image
             source={conversationImage}
             style={{height: hp(5), width: hp(5), borderRadius: 100}}

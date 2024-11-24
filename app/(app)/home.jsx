@@ -7,25 +7,17 @@ import Loading from '@/components/Loading.jsx';
 import ChatList from '@/components/ChatList'
 import { supabase } from '@/lib/supabase'
 export default function Home() {
-  const { logout, user } = useAuth()
+  const  { logout, user } = useAuth()
+  
   const [users, setUsers] = useState([]);
 
-  useEffect(() => {
-    //console.log('use effect triggered')
-    console.log(user)
-    if(user?.id){
-      getUsers()
-    }
-    console.log(users)
-    
-  },[])
-
-  const getUsers = async () => {
+  const getConversations = async () => {
     try {
-      console.log('getUser called');
+      console.log('getConver called');
       const { data, error } = await supabase
-        .from('friends')
-        .select('smaller_id, bigger_id');
+        .from('conversation_participants')
+        .select('conversation_id')
+        .eq('participant_id',user.id)
   
       console.log('data fetched');
   
@@ -35,11 +27,28 @@ export default function Home() {
         setUsers(data);
         console.log(data);
       }
-      console.log(users);
+      
+
     } catch (err) {
       console.error('Unexpected error:', err);
     }
+    
   };
+
+  useEffect(() => {
+    console.log('use effect triggered')
+    const fetchData = async () => {
+        await getConversations()
+        console.log('conversation after fetch', users)
+    }
+
+    if (user){
+      fetchData()
+    }
+
+  },[user])
+
+  
   
 
   const onLogout = async () => {

@@ -39,6 +39,7 @@ export default function SignUp() {
       setLoading(false)
 
       if (error) {
+        console.error(error)
         if (error.message.includes('Password should be at least 6 characters')){
           Alert.alert('Đăng ký', 'Mật khẩu phải dài ít nhất 6 kí tự')
         }

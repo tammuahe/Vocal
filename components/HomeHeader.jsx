@@ -17,7 +17,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 export default function HomeHeader() { 
     const [avatarUrl, setAvatarUrl] = useState(null);
-    const { user, logout} = useAuth()
+    const { user, logout } = useAuth()
     useEffect(() => {
         const fetchAvatar = async () => {
 
@@ -35,12 +35,9 @@ export default function HomeHeader() {
             if (data)
             {
                 setAvatarUrl(data.profile_picture);
-                
             }
 
             //console.log(data)
-
-            return
         };
 
         fetchAvatar();
@@ -53,7 +50,7 @@ export default function HomeHeader() {
         }
 
     return (
-        <SafeAreaView className='p-5 flex-row justify-between bg-lightred pb-6 rounded-b-3xl shadow'>
+        <SafeAreaView className='p-5 flex-row justify-between bg-darkred pb-6 rounded-b-3xl shadow'>
             <StatusBar backgroundColor="#E9F1FC"/>
             <Text style={{fontSize: hp(3)}} className='font-medium text-neutral-50'>Cuộc trò chuyện</Text>
 
@@ -63,9 +60,11 @@ export default function HomeHeader() {
                         <Image
                         style={{height: hp(4.5), width:hp(4.5), borderRadius: 100}}
                         source={{uri: avatarUrl}}
-                        //placeholder={{ blurhash }}
+                        placeholder={{ blurhash }}
                         transition={100}
-                        contentFit='scale-down'
+                        contentFit='contain'
+                        allowDownscaling={false}
+                        cachePolicy={'memory-disk'}
                         />
                     </MenuTrigger>
                     <MenuOptions 

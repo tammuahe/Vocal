@@ -13,13 +13,56 @@ export default function ChatItem(item) {
   const [lastMessage, setLastMessage] = useState('')
   const router = useRouter()
   useEffect(() => {
-    //console.log('chat item item prop', item.item.conversation_id)
-
-    getConversationsPicture()
-    getParticipants()
-    getTime()
-    getLastmessage()
-  }, [item])
+    getConversationsPicture();
+    getParticipants();
+  
+    // Fetch initial last message and time
+    const fetchLastMessageAndTime = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('conversation_messages')
+          .select('message_text, created_at')
+          .eq('conversation_id', item.item.conversation_id)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single();
+  
+        if (!error && data) {
+          setLastMessage(data.message_text);
+          setLastTime(formatDate(data.created_at));
+        }
+      } catch (err) {
+        console.error('Error fetching last message and time:', err);
+      }
+    };
+  
+    fetchLastMessageAndTime();
+  
+    // Subscribe to real-time updates for new messages
+    const channel = supabase
+      .channel('messageUpdates')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'conversation_messages',
+          filter: `conversation_id=eq.${item.item.conversation_id}`,
+        },
+        (payload) => {
+          const { message_text, created_at } = payload.new;
+          setLastMessage(message_text);
+          setLastTime(formatDate(created_at));
+        }
+      )
+      .subscribe();
+  
+    // Cleanup subscription on component unmount
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [item.item.conversation_id]);
+  
 
   const getConversationsPicture = async () => {
     try {
@@ -50,9 +93,9 @@ export default function ChatItem(item) {
   },[participants])
 
   const usernamesToString = (list) => {
-    // If the list is empty, return an empty string or a default string like "No participants"
+
     if (list.length === 0) {
-      return "No participants";
+      return "";
     }
   
     let string = '';
@@ -69,7 +112,7 @@ export default function ChatItem(item) {
   useEffect(() => {
     const newTitle = usernamesToString(participantsUsernames);
   
-    // Only update state if the new title is different from the current title
+
     if (newTitle !== conversationTitle) {
       setConversationTitle(newTitle);
     }
@@ -134,48 +177,18 @@ export default function ChatItem(item) {
     return date.toLocaleString();  // Formats as "MM/DD/YYYY, HH:MM:SS AM/PM" (depends on locale)
   };
 
-  const getTime = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('conversation_messages')
-        .select('created_at')
-        .eq('conversation_id',item.item.conversation_id)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single()
 
-      if (!error) {
-        //('lastime', formatDate(data['created_at']))
-        setLastTime(formatDate(data['created_at']))
-      }
-      
-    } catch (err) {
-      console.error('Unexpected error:', err);
-    }
-  }
 
-  const getLastmessage = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('conversation_messages')
-        .select('message_text')
-        .eq('conversation_id',item.item.conversation_id)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single()
-
-      if (!error) {
-        //console.log('last mess', data['message_text'])
-        setLastMessage(data['message_text'])
-      }
-      
-    } catch (err) {
-      console.error('Unexpected error:', err);
-    }
-  }
 
   const openInbox = () => {
-    router.push({pathname: '/inbox', param: item})
+    router.push({
+      pathname: '/inbox', 
+      params: {
+      conversation_id: item.item.conversation_id,
+      participantsUsernames,
+      participants_id: participants.flatMap(Object.values)
+    } 
+  })
   }
 
   return (
@@ -193,8 +206,13 @@ export default function ChatItem(item) {
         />
         <View className='flex-1 gap-1'>
             <View className='flex-row justify-between'>
-                <Text style={{fontSize: hp(1.8)}} className='font-semibold text-neutral-800'>{conversationTitle}</Text>
-                <Text style={{fontSize: hp(1.6)}} className='font-medium text-skyblue'>{lastTime}</Text>
+            <Text
+              style={{ fontSize: hp(2), maxWidth: wp(45) }}
+              ellipsizeMode="tail"
+              numberOfLines={1}
+              className="font-semibold text-neutral-800"
+            >{conversationTitle}</Text>
+                <Text style={{fontSize: hp(1.3)}} className='font-medium text-skyblue'>{lastTime}</Text>
             </View>
             <Text style={{fontSize: hp(1.6)}} className='font-medium text-neutral-500'>{lastMessage}</Text>
         </View>

@@ -57,7 +57,7 @@ export default function Inbox() {
         </View>
         <View style={{marginBottom: hp(1.6)}} className='pt-2'>
           <View className='flex-row justify-between items-center mx-3' style={{height: hp(9)}}>
-            <View className='flex-row content-around items-center bg-white border border-darkred pl-4 pr-4 rounded-full m-2'>
+            <View className='flex-row content-around items-center bg-white border border-darkred pl-4 pr-4 rounded-full m-2 my-1'>
               <TextInput
                 value={message}
                 onChangeText={value => setMessage(value) }

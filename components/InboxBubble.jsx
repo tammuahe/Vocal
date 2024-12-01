@@ -115,10 +115,10 @@ const fetchSenderUsername = async () => {
               <Image
                 style={{height: hp(3.9), width:hp(3.9), borderRadius: 100}}
                 source={{uri: senderImage}}
-                transition={100}
                 placeholder={require('@/assets/images/default_avatar.png')}
                 contentFit='cover'
                 cachePolicy={'memory'}
+                allowDownscaling={true}
               />
             </View>
 

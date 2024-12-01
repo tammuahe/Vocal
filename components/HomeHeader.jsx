@@ -14,8 +14,10 @@ import {
 import MenuItem from '@/components/MenuItem'
 import Feather from '@expo/vector-icons/Feather';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { useRouter } from 'expo-router';
 
 export default function HomeHeader() { 
+    const router = useRouter()
     const [avatarUrl, setAvatarUrl] = useState(null);
     const { user, logout } = useAuth()
     useEffect(() => {
@@ -43,7 +45,7 @@ export default function HomeHeader() {
         fetchAvatar();
     }, [user]);
 
-        const handleProfile = () => {}
+        const handleProfile = () => {router.push('/profile')}
 
         const handleLogout = async () => {
             await logout()

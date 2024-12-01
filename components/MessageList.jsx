@@ -71,7 +71,6 @@ export default function MessageList({conversationId}) {
       inverted
       data={[...messages].reverse()}
       showsVerticalScrollIndicator={false}
-      keyExtractor={(item, index) => `${item.created_at}-${index}`}
       renderItem={
         ({item}) => (<InboxBubble data={{...item, isUser: user.id === item.sender_id}}/>)
       } 

@@ -23,27 +23,34 @@ export default function HomeHeader() {
     useEffect(() => {
         const fetchAvatar = async () => {
 
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('profile_picture')
-                .eq('uuid', user.id)
-                .single()
+            // const { data, error } = await supabase
+            //     .from('profiles')
+            //     .select('profile_picture')
+            //     .eq('uuid', user.id)
+            //     .single()
 
-            if (error) {
-                console.error('Error fetching avatar:', error.message);
-                setAvatarUrl(null)
-            }
+            // if (error) {
+            //     console.error('Error fetching avatar:', error.message);
+            //     setAvatarUrl(null)
+            // }
             
-            if (data)
-            {
-                setAvatarUrl(data.profile_picture);
-            }
+            // if (data)
+            // {
+            //     setAvatarUrl(data.profile_picture);
+            // }
 
             //console.log(data)
+            Image.clearDiskCache()
+            Image.clearMemoryCache()
+            if(user?.id){ 
+            setAvatarUrl('https://svhpgiuamrfudkosbijk.supabase.co/storage/v1/object/public/avatars/' + user.id + '/' + user.id + '.jpeg')
+            }
         };
 
         fetchAvatar();
     }, [user]);
+        
+    useEffect(() => {console.log("avatarUrl", avatarUrl)}, [avatarUrl])
 
         const handleProfile = () => {router.push('/profile')}
 
@@ -62,11 +69,11 @@ export default function HomeHeader() {
                         <Image
                         style={{height: hp(4.5), width:hp(4.5), borderRadius: 100}}
                         source={{uri: avatarUrl}}
-                        placeholder={{ blurhash }}
+                        placeholder={require('@/assets/images/default_avatar.png')}
                         transition={100}
                         contentFit='contain'
                         allowDownscaling={false}
-                        cachePolicy={'memory-disk'}
+                        cachePolicy={'memory'}
                         />
                     </MenuTrigger>
                     <MenuOptions 

@@ -9,10 +9,8 @@ export default function _layout() {
       <AuthContextProvider>
         <MenuProvider>
           <Stack>
-            <Stack.Screen
-              name='home' 
-              options={{headerShown: false}}
-              />
+            <Stack.Screen name='home' options={{headerShown: false}}/>
+            <Stack.Screen name='addFriend' options={{headerShown: false} }/>
             <Stack.Screen name='listFriends' options={{headerShown: false} }/>
           </Stack>
         </MenuProvider>

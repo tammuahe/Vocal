@@ -4,8 +4,12 @@ import { useAuth } from "@/context/authContext";
 import SharedLayout from '@/components/SharedLayout'
 import UserAddIcon from '../../assets/icons/user-add-svgrepo-com.svg'
 import { supabase } from '@/lib/supabase'
+import {useRouter} from 'expo-router'
+import FriendItem from '../../components/FriendItem';
+
 
 export default function ListFriends() {
+    const router = useRouter();
     const  { logout, user } = useAuth();
     const [friends, setFriends] = useState([])
     const getListFriends = async () => {
@@ -33,10 +37,21 @@ export default function ListFriends() {
         }
     }, [user])
 
+    const navigateToAddFriendScreen = () => {
+        router.push('/(app)/addFriend')
+    }
+
     return (
-        <SharedLayout headerTitle="Friends" leftIcon={<UserAddIcon />}>
+        <SharedLayout headerTitle="Friends" leftIcon={<UserAddIcon onPress={navigateToAddFriendScreen}/>}>
             <View>
                 <TextInput className='w-full bg-white rounded-full px-6 py-4 mt-2 text-base' placeholder='Search'/>
+                <View className='py-4'>
+                    <FriendItem className="mb-2" infor={{userName: 'Nguyễn Huy Cường', matualFriend: 20}}/>
+                    <FriendItem  className="mb-2" infor={{userName: 'Nguyễn Huy Cường', matualFriend: 20}}/>
+                    <FriendItem  className="mb-2" infor={{userName: 'Nguyễn Huy Cường', matualFriend: 20}}/>
+                </View>
+
+                <Text>hleoeo</Text>
             </View>
         </SharedLayout>
     )

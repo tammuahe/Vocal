@@ -91,7 +91,7 @@ export default function HomeHeader() {
                         <MenuItem 
                         text='Trang cá nhân'
                         action={handleProfile}
-                        icon={<Feather name="user" size={24} color="darkblue" />}
+                        icon={<Feather name="user" size={hp(3)} color="darkblue" />}
                         />
 
                         <Divider />
@@ -99,7 +99,7 @@ export default function HomeHeader() {
                         <MenuItem 
                         text='Đăng xuất'
                         action={handleLogout}
-                        icon={<MaterialCommunityIcons name="logout-variant" size={24} color="darkred" />}
+                        icon={<MaterialCommunityIcons name="logout-variant" size={hp(3)} color="darkred" />}
                         />
                     </MenuOptions>
                 </Menu>

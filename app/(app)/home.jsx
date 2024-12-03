@@ -7,7 +7,7 @@ import Loading from '@/components/Loading.jsx';
 import ChatList from '@/components/ChatList'
 import { supabase } from '@/lib/supabase'
 export default function Home() {
-  const  { logout, user } = useAuth()
+  const  { user } = useAuth()
   
   const [users, setUsers] = useState([]);
 
@@ -49,15 +49,10 @@ export default function Home() {
   },[user])
 
   
-  
-
-  const onLogout = async () => {
-    await logout()
-  }
 
     return (
       <View className='flex-1 bg-lightblue'>
-        <StatusBar style='light' />
+        <StatusBar style='dark' />
         
         {users.length > 0 ? (
           <ChatList users={users} />

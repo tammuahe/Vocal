@@ -6,6 +6,9 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import Loading from '@/components/Loading.jsx';
 import ChatList from '@/components/ChatList'
 import { supabase } from '@/lib/supabase'
+import SharedLayout from '@/components/SharedLayout'
+import CreateChatIcon from '@/assets/icons/create-note-svgrepo-com.svg';
+
 export default function Home() {
   const  { logout, user } = useAuth()
   
@@ -56,17 +59,20 @@ export default function Home() {
   }
 
     return (
-      <View className='flex-1 bg-lightblue'>
-        <StatusBar style='light' />
-        
-        {users.length > 0 ? (
-          <ChatList users={users} />
-        ):(
-          <View className='flex items-center' style={{top: hp(30)}}>
-              <Loading size={hp(10)}/>
+      <SharedLayout headerTitle="Chats" leftIcon={<CreateChatIcon width={32} height={32} fill="#fff"/>}>
+          <View className='flex-1'>
+            <StatusBar style='light' />
+            {users.length > 0 ? (
+              <ChatList users={users} />
+            ):(
+              <View className='flex items-center' style={{top: hp(30)}}>
+                  <Loading size={hp(10)}/>
+              </View>
+            )}
           </View>
-        )}
-      </View>
+      </SharedLayout>
+      
     )
   }
 
+  

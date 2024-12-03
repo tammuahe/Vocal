@@ -1,7 +1,7 @@
 import React from 'react'
 import { Stack } from 'expo-router'
 import { AuthContextProvider } from '@/context/authContext';
-import HomeHeader from '@/components/HomeHeader.jsx'
+import HomeHeader from '@/components/HomeHeader.jsx';
 import { MenuProvider } from 'react-native-popup-menu';
 
 export default function _layout() {
@@ -11,10 +11,9 @@ export default function _layout() {
           <Stack>
             <Stack.Screen
               name='home' 
-              options={{
-                header: () => <HomeHeader />
-              }}
+              options={{headerShown: false}}
               />
+            <Stack.Screen name='listFriends' options={{headerShown: false} }/>
           </Stack>
         </MenuProvider>
       </AuthContextProvider>

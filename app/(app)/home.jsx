@@ -10,7 +10,7 @@ import SharedLayout from '@/components/SharedLayout'
 import CreateChatIcon from '@/assets/icons/create-note-svgrepo-com.svg';
 
 export default function Home() {
-  const  { logout, user } = useAuth()
+  const  { user } = useAuth()
   
   const [users, setUsers] = useState([]);
 
@@ -52,11 +52,6 @@ export default function Home() {
   },[user])
 
   
-  
-
-  const onLogout = async () => {
-    await logout()
-  }
 
     return (
       <SharedLayout headerTitle="Chats" leftIcon={<CreateChatIcon width={32} height={32} fill="#fff"/>}>

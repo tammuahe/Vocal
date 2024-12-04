@@ -21,24 +21,24 @@ export default function InboxHeader({conversationId, participantUsernames, parti
     useEffect(() => {
         const fetchAvatar = async () => {
 
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('profile_picture')
-                .eq('uuid', user.id)
-                .single()
-            //console.log('image', data.profile_picture)
-            if (error) {
-                console.error('Error fetching avatar:', error.message);
-                setAvatarUrl(null)
-            }
+            // const { data, error } = await supabase
+            //     .from('profiles')
+            //     .select('profile_picture')
+            //     .eq('uuid', user.id)
+            //     .single()
+            // //console.log('image', data.profile_picture)
+            // if (error) {
+            //     console.error('Error fetching avatar:', error.message);
+            //     setAvatarUrl(null)
+            // }
             
-            if (data)
-            {
-                setAvatarUrl(data.profile_picture);
+            // if (data)
+            // {
+            //     setAvatarUrl(data.profile_picture);
                 
-            }
-            
-            };
+            // }
+            setAvatarUrl('https://svhpgiuamrfudkosbijk.supabase.co/storage/v1/object/public/avatars/' + user.id + '/' + user.id + '.jpeg')
+             };
 
             fetchAvatar()
         ,[]}
@@ -47,22 +47,23 @@ export default function InboxHeader({conversationId, participantUsernames, parti
 
     const fetchParticipantAvatar = async (id) => {
 
-        const { data, error } = await supabase
-            .from('profiles')
-            .select('profile_picture')
-            .eq('uuid', id)
-            .single()
+        // const { data, error } = await supabase
+        //     .from('profiles')
+        //     .select('profile_picture')
+        //     .eq('uuid', id)
+        //     .single()
 
-        if (error) {
-            console.error('Error fetching participant avatar:', error.message);
-            return null
-        }
+        // if (error) {
+        //     console.error('Error fetching participant avatar:', error.message);
+        //     return null
+        // }
         
-        if (data)
-        {  
-            // console.log('partic image: ', data)
-            return data.profile_picture;
-        }
+        // if (data)
+        // {  
+        //     // console.log('partic image: ', data)
+        //     return data.profile_picture;
+        // }
+        return 'https://svhpgiuamrfudkosbijk.supabase.co/storage/v1/object/public/avatars/' + id + '/' + id + '.jpeg'
     }
     useEffect(() => {
         const fetchParticipantAvatars = async () => {
@@ -80,7 +81,6 @@ export default function InboxHeader({conversationId, participantUsernames, parti
 
   return (
         <Stack.Screen
-            
             options={
                 {
                     headerStyle:{
@@ -113,10 +113,11 @@ export default function InboxHeader({conversationId, participantUsernames, parti
                                                 width:hp(4.5), borderRadius: 100
                                             }}
                                             source={{uri: item}}
-                                            placeholder={{ blurhash }}
-                                            transition={100}
                                             contentFit='contain'
-                                            allowDownscaling={false}
+                                            placeholder={require('@/assets/images/default_avatar.png')}
+                                            transition={100}
+                                            allowDownscaling={true}
+                                            cachePolicy={'memory'}
                                             />)
                                         } />
                         </View>

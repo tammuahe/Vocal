@@ -6,7 +6,6 @@ import { supabase } from '../lib/supabase'
 
 const MainLayout = () => {
   const {setAuth} = useAuth();
-  const segments = useSegments();
   const router = useRouter();
 
   useEffect(() => {
@@ -14,6 +13,7 @@ const MainLayout = () => {
     
       if(session){
         setAuth(session?.user)
+        //replaced with /profile for easier debugging. Replace with /home after done.
         router.replace('/home')
       }
       else{

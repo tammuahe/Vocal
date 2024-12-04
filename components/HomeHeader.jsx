@@ -14,36 +14,45 @@ import {
 import MenuItem from '@/components/MenuItem'
 import Feather from '@expo/vector-icons/Feather';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { useRouter } from 'expo-router';
 
 export default function HomeHeader() { 
+    const router = useRouter()
     const [avatarUrl, setAvatarUrl] = useState(null);
     const { user, logout } = useAuth()
     useEffect(() => {
         const fetchAvatar = async () => {
 
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('profile_picture')
-                .eq('uuid', user.id)
-                .single()
+            // const { data, error } = await supabase
+            //     .from('profiles')
+            //     .select('profile_picture')
+            //     .eq('uuid', user.id)
+            //     .single()
 
-            if (error) {
-                console.error('Error fetching avatar:', error.message);
-                setAvatarUrl(null)
-            }
+            // if (error) {
+            //     console.error('Error fetching avatar:', error.message);
+            //     setAvatarUrl(null)
+            // }
             
-            if (data)
-            {
-                setAvatarUrl(data.profile_picture);
-            }
+            // if (data)
+            // {
+            //     setAvatarUrl(data.profile_picture);
+            // }
 
             //console.log(data)
+            Image.clearDiskCache()
+            Image.clearMemoryCache()
+            if(user?.id){ 
+            setAvatarUrl('https://svhpgiuamrfudkosbijk.supabase.co/storage/v1/object/public/avatars/' + user.id + '/' + user.id + '.jpeg')
+            }
         };
 
         fetchAvatar();
     }, [user]);
+        
+    useEffect(() => {console.log("avatarUrl", avatarUrl)}, [avatarUrl])
 
-        const handleProfile = () => {}
+        const handleProfile = () => {router.push('/profile')}
 
         const handleLogout = async () => {
             await logout()
@@ -60,11 +69,11 @@ export default function HomeHeader() {
                         <Image
                         style={{height: hp(4.5), width:hp(4.5), borderRadius: 100}}
                         source={{uri: avatarUrl}}
-                        placeholder={{ blurhash }}
+                        placeholder={require('@/assets/images/default_avatar.png')}
                         transition={100}
                         contentFit='contain'
                         allowDownscaling={false}
-                        cachePolicy={'memory-disk'}
+                        cachePolicy={'memory'}
                         />
                     </MenuTrigger>
                     <MenuOptions 
@@ -82,7 +91,7 @@ export default function HomeHeader() {
                         <MenuItem 
                         text='Trang cá nhân'
                         action={handleProfile}
-                        icon={<Feather name="user" size={24} color="darkblue" />}
+                        icon={<Feather name="user" size={hp(3)} color="darkblue" />}
                         />
 
                         <Divider />
@@ -90,7 +99,7 @@ export default function HomeHeader() {
                         <MenuItem 
                         text='Đăng xuất'
                         action={handleLogout}
-                        icon={<MaterialCommunityIcons name="logout-variant" size={24} color="darkred" />}
+                        icon={<MaterialCommunityIcons name="logout-variant" size={hp(3)} color="darkred" />}
                         />
                     </MenuOptions>
                 </Menu>

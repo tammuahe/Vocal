@@ -14,7 +14,7 @@ const MainLayout = () => {
       if(session){
         setAuth(session?.user)
         //replaced with /profile for easier debugging. Replace with /home after done.
-        router.replace('/profile')
+        router.replace('/home')
       }
       else{
         setAuth(null)

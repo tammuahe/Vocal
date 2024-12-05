@@ -33,7 +33,7 @@ export default function _layout() {
 
   return(
     <AuthContextProvider>
-      <MainLayout />
+        <MainLayout />  
     </AuthContextProvider>
   )
     

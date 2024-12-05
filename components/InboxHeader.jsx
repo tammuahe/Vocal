@@ -6,8 +6,9 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import { useAuth } from '../context/authContext';
 import { Image } from 'expo-image';
 import { supabase } from '../lib/supabase';
-
 import { blurhash } from '../utils/common'
+import BackIcon from "../assets/icons/return-back-button-svgrepo-com";
+
 export default function InboxHeader({conversationId, participantUsernames, participantId}) {
     const {user} = useAuth()
     const router = useRouter()
@@ -77,72 +78,81 @@ export default function InboxHeader({conversationId, participantUsernames, parti
         // console.log('participantAvatars', participantAvatars)
     }, [participantId]);
 
-    const handleBack = () => {router.back()}
+  const handleBack = () => {
+    router.back();
+  };
 
+  const handleUserProfile = () => {
+    router.push('/profile');
+  };
+  
   return (
-        <Stack.Screen
-            options={
-                {
-                    headerStyle:{
-                        backgroundColor: '#F86565'
-                    },
-                    title:'',
-                    
-                    headerLeft: () => (
-                        <View className='flex-row items-center gap-4 '> 
-                            <TouchableOpacity  onPress={handleBack}>
-                                <AntDesign name="back" size={hp(3.5)} color="#428DF0" />
-                            </TouchableOpacity>
-                                <FlatList
-                                    className='rounded-2xl '
-                                    style={{
-                                        flexGrow: 0,
-                                        width: wp(30),
-                                    }}
-                                    horizontal={true}
-                                    data={participantAvatars}
-                                    showsVerticalScrollIndicator={false}
-                                    showsHorizontalScrollIndicator={false}
-                                    renderItem={
-                                        ({item}) => (
-                                            <Image
-                                            style={{
-                                                flex: 1,
-                                                margin: 2,
-                                                height: hp(4.5), 
-                                                width:hp(4.5), borderRadius: 100
-                                            }}
-                                            source={{uri: item}}
-                                            contentFit='contain'
-                                            placeholder={require('@/assets/images/default_avatar.png')}
-                                            transition={100}
-                                            allowDownscaling={true}
-                                            cachePolicy={'memory'}
-                                            />)
-                                        } />
-                        </View>
-                    ),
-                    headerRight: () => (
-                        <View className='flex-row items-center gap-4 '> 
-                            <TouchableOpacity onPress={() => {}}>
-                            <Image
-                                style={{
-                                    margin: 2,
-                                    height: hp(4.5), 
-                                    width:hp(4.5), borderRadius: 100
-                                }}
-                                source={{uri: avatarUrl}}
-                                placeholder={{ blurhash }}
-                                contentFit='contain'
-                                allowDownscaling={false}
-                                cachePolicy={'memory-disk'}
-                                />
-                            </TouchableOpacity>
-                                
-                        </View>
-                    ),
-                }
-            }
-        />
-    )
+    <Stack.Screen
+      options={{
+        headerStyle: {
+          backgroundColor: "#F1F7FF",
+        },
+        title: "",
+
+        headerLeft: () => (
+          <View className="flex-row items-center gap-4 ">
+
+              <BackIcon
+                width={40}
+                height={40}
+                fill={"#333333"}
+                onPress={handleBack}
+              />
+            <FlatList
+              className="rounded-2xl "
+              style={{
+                flexGrow: 0,
+                width: wp(30),
+              }}
+              horizontal={true}
+              data={participantAvatars}
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}
+              renderItem={({ item }) => (
+                <Image
+                  style={{
+                    flex: 1,
+                    margin: 2,
+                    height: hp(4.5),
+                    width: hp(4.5),
+                    borderRadius: 100,
+                  }}
+                  source={{ uri: item }}
+                  contentFit="contain"
+                  placeholder={require("@/assets/images/default_avatar.png")}
+                  transition={100}
+                  allowDownscaling={true}
+                  cachePolicy={"memory"}
+                />
+              )}
+            />
+          </View>
+        ),
+        headerRight: () => (
+          <View className="flex-row items-center gap-4 ">
+            <TouchableOpacity onPress={handleUserProfile}>
+              <Image
+                style={{
+                  margin: 2,
+                  height: hp(4.5),
+                  width: hp(4.5),
+                  borderRadius: 100,
+                }}
+                source={{ uri: avatarUrl }}
+                placeholder={require("@/assets/images/default_avatar.png") }
+                contentFit="contain"
+                allowDownscaling={false}
+                cachePolicy={"memory"}
+              />
+            </TouchableOpacity>
+          </View>
+        ),
+      }}
+    />
+  );
 }

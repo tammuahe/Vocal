@@ -31,7 +31,7 @@ export default function SharedLayout({ children, headerTitle, leftIcon }) {
           >
             <ChatRoundIcon
               onPress={() => {
-                if (route.name != "home") router.push("/(app)/home");
+                if (route.name != "home") router.replace("/(app)/home");
               }}
             />
           </View>
@@ -44,7 +44,7 @@ export default function SharedLayout({ children, headerTitle, leftIcon }) {
             <UsersIcon
               onPress={() => {
                 if (route.name != "listFriends")
-                  router.push("/(app)/listFriends");
+                  router.replace("/(app)/listFriends");
               }}
             />
           </View>

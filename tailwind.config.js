@@ -8,14 +8,19 @@ module.exports = {
       colors:{
         lightblue: '#E9F1FC',
         skyblue: '#A7C8F2',
-        lightgrey:'#EAE8E8',
+        lightgrey:'#F6FCFE',
         darkerblue: '#99BFF2',
         darkblue: '#428DF0',
         lightred: '#FBA7A7',
         darkerred: '#F98686',
         darkred: '#F86565',
         verylightred: '#fee7e7',
-      }
+        
+      },
+      fontFamily: {
+        satoshi: ['Satoshi', 'sans-serif'],
+        inter: ['Inter', 'sans-serif'],
+      },
     },
   },
   plugins: [],

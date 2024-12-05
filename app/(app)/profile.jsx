@@ -38,13 +38,15 @@ export default function profile() {
   const [loading, setLoading] = useState(false);
   const [birthday, setBirthday] = useState(new Date());
   const [showBirthdayPicker, setShowBirthdayPicker] = useState(false);
-  const [phone, setPhone] = useState();
-  const bioRef = useRef();
-  const usernameRef = useRef();
+  //const [phone, setPhone] = useState();
+  const [infoHasChanged, setInfoHasChanged] = useState(false)
+  const bioRef = useRef("");
+  const usernameRef = useRef("");
+  const phoneRef = useRef("");
 
   const getProfileInfo = async () => {
     try {
-      console.log("getProfileInfo called");
+      //console.log("getProfileInfo called");
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
@@ -78,12 +80,13 @@ export default function profile() {
       setUsername(userInfo.user_name);
       setBio(userInfo.bio);
       setBirthday(new Date(userInfo.birthday));
-      setPhone(userInfo.phone);
+      //setPhone(userInfo.phone);
+      phoneRef.current = userInfo.phone;
     }
   };
 
   useEffect(() => {
-    console.log("profile info fetched:", userInfo);
+    //console.log("profile info fetched:", userInfo);
     unpackUserInfo();
   }, [userInfo]);
 
@@ -226,16 +229,68 @@ export default function profile() {
     }
   };
 
+  const checkinfoHasChanged = () => {
+    setInfoHasChanged(
+      phoneRef?.current.trim() != userInfo.phone ||
+      birthday.toISOString().split("T")[0] != userInfo.birthday ||
+      gender != userInfo.gender
+    );
+  };
+
+  const handleSaveChanges = async () => {
+    console.log(phoneRef.current);
+    console.log(birthday);
+    console.log(gender);
+    try {
+      setLoading(true);
+      if (infoHasChanged) {
+        console.log("handleSubmitBio called");
+        const { error } = await supabase
+          .from("profiles")
+          .update({
+            gender: gender,
+            birthday: birthday.toISOString().split("T")[0],
+            phone: phoneRef.current.trim(),
+          })
+          .eq("uuid", user.id);
+
+        console.log("data updated");
+        if (error) {
+          console.error("Supabase error:", error);
+        } else {
+          setBio(bioRef.current);
+        }
+      }
+    } catch (err) {
+      console.error("Unexpected error:", err);
+    } finally {
+      setLoading(false);
+      router.back()
+    }
+  };
+
   // useEffect(()=>{console.log('editBioVisible: ',editBioVisible)},[editBioVisible])
 
   const onBirthdayChange = ({ type }, selectedDate) => {
     if (type == "set") {
       setBirthday(selectedDate);
       setShowBirthdayPicker(false);
+      checkinfoHasChanged()
     } else {
       setShowBirthdayPicker(false);
     }
   };
+
+  useEffect(() => {
+    if (birthday) {
+      console.log(
+        "birthday usestate: ",
+        birthday.toISOString().split("T")[0],
+        "fetched birthday: ",
+        userInfo?.birthday
+      );
+    }
+  }, [userInfo, birthday]);
 
   const toggleDatePicker = () => {
     setShowBirthdayPicker(true);
@@ -367,9 +422,9 @@ export default function profile() {
           )}
 
           <View className="w-[90%] h-[55%]">
-            <View className="flex-row items-center my-3">
+            <View className="flex-row items-center">
               <View
-                className="flex-1 bg-lightgrey rounded-3xl my-7"
+                className="flex-1 bg-lightgrey rounded-3xl my-4"
                 style={{ height: hp(8) }}
               >
                 <View className="pl-3">
@@ -377,17 +432,27 @@ export default function profile() {
                     Số điện thoại
                   </Text>
                   <TextInput
+                    keyboardType="numeric"
+                    onChangeText={(value) => {
+                      phoneRef.current = value;
+                      checkinfoHasChanged()
+                      console.log(phoneRef.current);
+                    }}
                     className="ml-5 p-0"
-                    placeholder={phone ? phone : "Nhập số điện thoại"}
-                    defaultValue={phone ? phone : ""}
+                    placeholder={
+                      phoneRef?.current
+                        ? phoneRef?.current
+                        : "Nhập số điện thoại"
+                    }
+                    defaultValue={phoneRef?.current ? phoneRef?.current : ""}
                   />
                 </View>
               </View>
             </View>
 
-            <View className="flex-row items-center my-3">
+            <View className="flex-row items-center">
               <TouchableOpacity
-                className="flex-1 bg-lightgrey rounded-3xl my-7"
+                className="flex-1 bg-lightgrey rounded-3xl my-4"
                 style={{ height: hp(8) }}
                 onPress={toggleDatePicker}
               >
@@ -412,7 +477,7 @@ export default function profile() {
               </TouchableOpacity>
             </View>
 
-            <View className="flex-1 items-center my-3">
+            <View className="flex-1 items-center">
               <Menu>
                 <MenuTrigger
                   customStyles={{
@@ -420,7 +485,7 @@ export default function profile() {
                   }}
                 >
                   <View
-                    className=" bg-lightgrey rounded-3xl my-7"
+                    className=" bg-lightgrey rounded-3xl my-4"
                     style={{ height: hp(8) }}
                   >
                     <View className="pl-3 flex-1">
@@ -452,6 +517,7 @@ export default function profile() {
                     text="Nam"
                     action={() => {
                       setGender("male");
+                      checkinfoHasChanged()
                     }}
                     icon={
                       <FontAwesome5 name="male" size={hp(3)} color="black" />
@@ -462,6 +528,7 @@ export default function profile() {
                     text="Nữ"
                     action={() => {
                       setGender("female");
+                      checkinfoHasChanged()
                     }}
                     icon={
                       <FontAwesome5 name="female" size={hp(3)} color="black" />
@@ -474,14 +541,16 @@ export default function profile() {
 
           {/*save button */}
           <View className="absolute bottom-28 left-0 right-0 mx-auto items-center">
-            <TouchableOpacity>
-              <View className="bg-lightgrey p-4 rounded-2xl px-7">
-              <Text>Lưu</Text>
-              </View>
-            </TouchableOpacity>
+            {infoHasChanged && (
+              <TouchableOpacity onPress={handleSaveChanges}>
+                <View className="bg-lightgrey p-4 rounded-2xl px-7">
+                  <Text>Lưu</Text>
+                </View>
+              </TouchableOpacity>
+            )}
           </View>
           {userInfo?.created_at && (
-            <Text className="ml-auto mt-20">
+            <Text className="ml-auto mt-20 italic text-neutral-500">
               Gia nhập từ: {formatDate(userInfo?.created_at)}
             </Text>
           )}

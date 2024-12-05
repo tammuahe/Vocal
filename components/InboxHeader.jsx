@@ -1,25 +1,19 @@
-import { View, Text, TouchableOpacity, FlatList } from "react-native";
-import React, { useEffect, useState } from "react";
-import { Stack, useRouter } from "expo-router";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
-import { useAuth } from "../context/authContext";
-import { Image } from "expo-image";
-import { supabase } from "../lib/supabase";
+import { View, Text, TouchableOpacity, FlatList } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { Stack, useRouter } from 'expo-router'
+import AntDesign from '@expo/vector-icons/AntDesign';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { useAuth } from '../context/authContext';
+import { Image } from 'expo-image';
+import { supabase } from '../lib/supabase';
+import { blurhash } from '../utils/common'
+import BackIcon from "../assets/icons/return-back-button-svgrepo-com";
 
-import { blurhash } from "../utils/common";
-export default function InboxHeader({
-  conversationId,
-  participantUsernames,
-  participantId,
-}) {
-  const { user } = useAuth();
-  const router = useRouter();
-  const [avatarUrl, setAvatarUrl] = useState(null);
-  const [participantAvatars, setParticipantAvatars] = useState([]);
+export default function InboxHeader({conversationId, participantUsernames, participantId}) {
+    const {user} = useAuth()
+    const router = useRouter()
+    const [avatarUrl, setAvatarUrl] = useState(null);
+    const [participantAvatars, setParticipantAvatars] = useState([]);
 
   // console.log('conversationId: ', conversationId)
   // console.log('participantId: ', participantId)
@@ -97,19 +91,27 @@ export default function InboxHeader({
     router.back();
   };
 
+  const handleUserProfile = () => {
+    router.push('/profile');
+  };
+  
   return (
     <Stack.Screen
       options={{
         headerStyle: {
-          backgroundColor: "#F86565",
+          backgroundColor: "#F1F7FF",
         },
         title: "",
 
         headerLeft: () => (
           <View className="flex-row items-center gap-4 ">
-            <TouchableOpacity onPress={handleBack}>
-              <AntDesign name="back" size={hp(3.5)} color="#428DF0" />
-            </TouchableOpacity>
+
+              <BackIcon
+                width={40}
+                height={40}
+                fill={"#333333"}
+                onPress={handleBack}
+              />
             <FlatList
               className="rounded-2xl "
               style={{
@@ -142,7 +144,7 @@ export default function InboxHeader({
         ),
         headerRight: () => (
           <View className="flex-row items-center gap-4 ">
-            <TouchableOpacity onPress={() => {}}>
+            <TouchableOpacity onPress={handleUserProfile}>
               <Image
                 style={{
                   margin: 2,
@@ -151,10 +153,10 @@ export default function InboxHeader({
                   borderRadius: 100,
                 }}
                 source={{ uri: avatarUrl }}
-                placeholder={{ blurhash }}
+                placeholder={require("@/assets/images/default_avatar.png") }
                 contentFit="contain"
                 allowDownscaling={false}
-                cachePolicy={"memory-disk"}
+                cachePolicy={"memory"}
               />
             </TouchableOpacity>
           </View>

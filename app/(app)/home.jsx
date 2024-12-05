@@ -54,7 +54,7 @@ export default function Home() {
   
 
     return (
-      <SharedLayout headerTitle="Chats" leftIcon={<CreateChatIcon width={32} height={32} fill="#fff"/>}>
+      <SharedLayout headerTitle="Cuộc trò chuyện" leftIcon={<CreateChatIcon width={32} height={32} fill="#fff"/>}>
           <View className='flex-1'>
             <StatusBar style='light' />
             {users.length > 0 ? (

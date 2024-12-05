@@ -42,9 +42,9 @@ export default function ListFriends() {
     }
 
     return (
-        <SharedLayout headerTitle="Friends" leftIcon={<UserAddIcon onPress={navigateToAddFriendScreen}/>}>
+        <SharedLayout headerTitle="Bạn bè" leftIcon={<UserAddIcon onPress={navigateToAddFriendScreen}/>}>
             <View>
-                <TextInput className='w-full bg-white rounded-full px-6 py-4 mt-2 text-base' placeholder='Search'/>
+                <TextInput className='w-full bg-white rounded-full px-6 py-4 mt-2 text-base' placeholder='Tìm bạn bè'/>
                 <View className='py-4'>
                     <FriendItem className="mb-2" infor={{userName: 'Nguyễn Huy Cường', matualFriend: 20}}/>
                     <FriendItem  className="mb-2" infor={{userName: 'Nguyễn Huy Cường', matualFriend: 20}}/>

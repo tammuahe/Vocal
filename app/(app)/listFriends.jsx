@@ -1,18 +1,75 @@
-import React, { Component, useEffect, useState } from 'react'
-import { Alert, Button, SafeAreaView, Text, View, TextInput, FlatList } from 'react-native'
+import React, { Component, useEffect, useRef, useState } from 'react'
+import { 
+    Alert,
+    Button, 
+    SafeAreaView, 
+    Text, 
+    View, 
+    TextInput, 
+    FlatList, 
+    ScrollView, 
+    Animated, 
+    PanResponder, 
+    Dimensions, 
+    Pressable,
+    TouchableOpacity, 
+} from 'react-native'
+import { Image } from 'expo-image';
 import { useAuth } from "@/context/authContext";
 import SharedLayout from '@/components/SharedLayout'
 import UserAddIcon from '../../assets/icons/user-add-svgrepo-com.svg'
 import { supabase } from '@/lib/supabase'
 import {useRouter} from 'expo-router'
 import FriendItem from '../../components/FriendItem';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import MessageIcon from '../../assets/icons/message-circle-dots-svgrepo-com.svg'
+import UnfriendIcon from '../../assets/icons/unfriend-svgrepo-com.svg'
+import BlockIcon from '../../assets/icons/block-1-svgrepo-com.svg'
+
+const { height } = Dimensions.get("window"); // Lấy chiều cao màn hình
 
 
 export default function ListFriends() {
     const router = useRouter();
     const  { logout, user } = useAuth();
     const [friends, setFriends] = useState([]);
+    const [infoFriend, setInforFriend] = useState({});
+    const [friend, setFriend] = useState({});
     const [searchValue, setSearchValue] = useState('');
+    const [isShowNavBottom, setIsShowNavBottom] = useState(true);
+    const translateY = useRef(new Animated.Value(400)).current;
+    const panResponder = useRef(
+        PanResponder.create({
+          onStartShouldSetPanResponder: () => true,
+          onPanResponderMove: (evt, gestureState) => {
+            // Giới hạn kéo xuống không quá 300
+            const newTranslateY = Math.max(0, gestureState.dy);
+            translateY.setValue(newTranslateY);
+          },
+          onPanResponderRelease: (evt, gestureState) => {
+            if (gestureState.dy > 150) {
+              // Nếu kéo quá 150px thì biến mất
+              Animated.parallel([
+                Animated.timing(translateY, {
+                  toValue: height, // Di chuyển xuống ngoài màn hình
+                  duration: 100,
+                  useNativeDriver: true,
+                }),
+              ]).start(() => setIsShowNavBottom(true)); // Ẩn sau khi animation kết thúc
+            } else {
+              // Nếu kéo không đủ xa thì quay về vị trí ban đầu
+              Animated.parallel([
+                Animated.timing(translateY, {
+                    toValue: 0, 
+                    duration: 100, 
+                    useNativeDriver: true,
+                  }),
+              ]).start();
+            }
+          },
+        })
+      ).current;
+
     const getListFriends = async () => {
         try {
             const {data, error} = await supabase
@@ -48,7 +105,6 @@ export default function ListFriends() {
                 .from('profiles')
                 .select('uuid')
                 .like('user_name', `%${user_name}%`); 
-            
             if (data) {
                 const searchFriends = data
                 .filter(item => item.uuid != user.id)
@@ -69,28 +125,99 @@ export default function ListFriends() {
         await searchFriendByUsername(value); 
     };
 
-    return (
-        <SharedLayout headerTitle="Bạn bè" leftIcon={<UserAddIcon onPress={navigateToAddFriendScreen}/>}>
-            <View>
-                <TextInput className='w-full bg-white rounded-full px-6 py-4 mt-2 text-base' placeholder='Tìm bạn bè'
-                    value={searchValue} onChangeText={handleChangeSearchInput}
-                />
-                {searchValue == '' && 
-                    <View className='py-4'>
-                        <Text className='text-white text-3xl font-bold'>{friends?.length} bạn bè</Text>
-                    </View>
-                }
-                <View className='py-4'>
-                    <FlatList 
-                        data={friends}
-                        keyExtractor={item => item.relation_id}
-                        renderItem={({item}) => <FriendItem className="mb-2" infor={item}/>}
-                    />
-                    
-                </View>
+    const handlePressFriendMoreAction = (data) => {
+        if(data != null) {
+            setFriend(data.friend);
+            setInforFriend(data.infor);
+        }
+        setIsShowNavBottom(!isShowNavBottom)
+        if(!isShowNavBottom) {
+            Animated.timing(translateY, {
+                toValue: 400, 
+                duration: 200, 
+                useNativeDriver: true,
+                }).start();
+        }else {
+            Animated.timing(translateY, {
+                toValue: 0, 
+                duration: 200, 
+                useNativeDriver: true,
+                }).start();
+        }
+    }
 
-                <Text>hleoeo</Text>
-            </View>
+    const converDateToString = (dateStr) => {
+        const date = new Date(dateStr);
+
+        const month = date.getMonth() + 1; 
+        const year = date.getFullYear();
+
+        const formattedDate = `tháng ${month} năm ${year}`;
+        return formattedDate;
+    }
+
+    return (
+        <SharedLayout headerTitle="Bạn bè" leftIcon={<UserAddIcon onPress={navigateToAddFriendScreen}/>} showNavBottom={isShowNavBottom} >
+                <View className='flex-1'> 
+                    <TextInput className='w-full bg-white rounded-full px-6 py-4 mt-2 text-base' placeholder='Tìm bạn bè'
+                        value={searchValue} onChangeText={handleChangeSearchInput}
+                    />
+                    {searchValue == '' && 
+                        <View className='py-4'>
+                            <Text className='text-white text-3xl font-bold'>{friends?.length} bạn bè</Text>
+                        </View>
+                    }
+                    <View className='py-4'>
+                        <FlatList 
+                            data={friends}
+                            keyExtractor={(item,index) => item.smaller_id}
+                            renderItem={({item}) => <FriendItem className="mb-2" infor={item} onMoreActionPress={(data) => handlePressFriendMoreAction(data)}/>}
+                            // nestedScrollEnabled
+                        />
+                        
+                    </View>
+    
+                </View>
+                {!isShowNavBottom && 
+                    <Pressable onPress={() => handlePressFriendMoreAction(null)} className='absolute bottom-0 left-0 right-0 z-40 w-screen h-screen bg-black opacity-30'>
+                    </Pressable>
+                }
+                <Animated.View 
+                    style={[{ transform: [{ translateY }] }]} 
+                    className='w-screen h-80 bg-[#97D7FF] absolute bottom-0 left-0 z-50 rounded-s-[16px]'
+                    {...panResponder.panHandlers}
+                >
+                    <View className='flex-row justify-center items-center py-4'>
+                        <View className='bg-white w-16 h-[6px] rounded-full'></View>
+                    </View>
+                    <View className='flex-row px-6 pb-2'>
+                        <Image 
+                            source={''} 
+                            style={{height: hp(8), width: hp(8), borderRadius: 100}}
+                            contentFit='contain'
+                            placeholder={require('../../assets/images/default_avatar.png')}
+                        />
+                        <View className='flex-col items-start ml-2'>
+                            <Text className='text-white font-bold text-2xl'>{friend?.user_name}</Text>
+                            <Text className='text-white mt-1'>Bạn bè từ {converDateToString(infoFriend?.add_at)}</Text>
+                        </View>
+                    </View>
+                    <View className='w-full h-[1px] bg-white'></View>
+                    <View className='flex-col items-left py-4 px-6'>
+                        <TouchableOpacity className='flex-row items-center mb-4'>
+                            <MessageIcon />
+                            <Text className='ml-2 text-xl text-white'>Nhắn tin cho {friend?.user_name}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity className='flex-row items-center mb-4'>
+                            <UnfriendIcon />
+                            <Text className='ml-2 text-xl text-white'>Hủy kết bạn với {friend?.user_name}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity className='flex-row items-center mb-4'>
+                            <BlockIcon />
+                            <Text className='ml-2 text-xl text-white'>Chặn {friend?.user_name}</Text>
+                        </TouchableOpacity>
+                    </View>
+                </Animated.View>
         </SharedLayout>
     )
 

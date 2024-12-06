@@ -9,11 +9,11 @@ import { useRoute } from "@react-navigation/native";
 import React from "react";
 import HomeHeader from "./HomeHeader";
 
-export default function SharedLayout({ children, headerTitle, leftIcon }) {
+export default function SharedLayout({ children, headerTitle, leftIcon, showNavBottom = true, ...res }) {
   const router = useRouter();
   const route = useRoute();
   return (
-    <SafeAreaView className="flex-1">
+    <SafeAreaView {...res}>
       <LinearGradient className="h-screen" colors={["#FFB9B9", "#A0C8FC"]}>
         <HomeHeader
           leftIcon={leftIcon}
@@ -21,42 +21,44 @@ export default function SharedLayout({ children, headerTitle, leftIcon }) {
         />
 
         <View className="flex-1 px-4">{children}</View>
-
-        <SafeAreaView className="h-16 px-4  flex-row items-center bg-[#97D7FF]">
-          <View
-            className={
-              (route.name == "home" ? "border-t border-white " : " ") +
-              "w-1/3 h-full flex items-center justify-center"
-            }
-          >
-            <ChatRoundIcon
-              onPress={() => {
-                if (route.name != "home") router.replace("/(app)/home");
-              }}
-            />
-          </View>
-          <View
-            className={
-              (route.name == "listFriends" ? "border-t border-white " : " ") +
-              "w-1/3 h-full flex items-center justify-center"
-            }
-          >
-            <UsersIcon
-              onPress={() => {
-                if (route.name != "listFriends")
-                  router.replace("/(app)/listFriends");
-              }}
-            />
-          </View>
-          <View
-            className={
-              (route.name == "settings" ? "border-t border-white " : " ") +
-              "w-1/3 h-full flex items-center justify-center"
-            }
-          >
-            <SettingsIcon />
-          </View>
-        </SafeAreaView>
+        {
+          showNavBottom && 
+            <SafeAreaView className="h-16 px-4  flex-row items-center bg-[#97D7FF]">
+              <View
+                className={
+                  (route.name == "home" ? "border-t border-white " : " ") +
+                  "w-1/3 h-full flex items-center justify-center"
+                }
+              >
+                <ChatRoundIcon
+                  onPress={() => {
+                    if (route.name != "home") router.replace("/(app)/home");
+                  }}
+                />
+              </View>
+              <View
+                className={
+                  (route.name == "listFriends" ? "border-t border-white " : " ") +
+                  "w-1/3 h-full flex items-center justify-center"
+                }
+              >
+                <UsersIcon
+                  onPress={() => {
+                    if (route.name != "listFriends")
+                      router.push("/(app)/listFriends");
+                  }}
+                />
+              </View>
+              <View
+                className={
+                  (route.name == "settings" ? "border-t border-white " : " ") +
+                  "w-1/3 h-full flex items-center justify-center"
+                }
+              >
+                <SettingsIcon />
+              </View>
+            </SafeAreaView>
+        }
       </LinearGradient>
     </SafeAreaView>
   );

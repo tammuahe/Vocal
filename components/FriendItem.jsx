@@ -8,7 +8,7 @@ import { supabase } from '@/lib/supabase'
 
 
 
-export default function FriendItem({infor ,...res}) {
+export default function FriendItem({infor, onMoreActionPress, ...res}) {
     const {user} = useAuth();
     const [friend, setFriend] = useState({});
 
@@ -35,23 +35,27 @@ export default function FriendItem({infor ,...res}) {
         }
     }, [user])
 
+    const handleMoreActionPress = () => {
+        onMoreActionPress({friend: friend, infor: infor})
+    }
+
     return (
         <View {...res}>
-        <View className="bg-white w-full h-[60px] rounded-xl px-2 flex-row items-center" >
-            <Image 
-                source={''} 
-                style={{height: hp(5), width: hp(5), borderRadius: 100}}
-                contentFit='contain'
-                placeholder={require('../assets/images/default-conversation.png')}
-            />
-            <View className="ml-1">
-                <Text className="text-lg font-semibold"> {friend.user_name}</Text>
-                {/* <Text className="text-[#A9A9A9]"> {infor.matualFriend} bạn chung</Text> */}
+            <View className="bg-white w-full h-[60px] rounded-xl px-2 flex-row items-center" >
+                <Image 
+                    source={''} 
+                    style={{height: hp(5), width: hp(5), borderRadius: 100}}
+                    contentFit='contain'
+                    placeholder={require('../assets/images/default_avatar.png')}
+                />
+                <View className="ml-1">
+                    <Text className="text-lg font-semibold"> {friend.user_name}</Text>
+                    {/* <Text className="text-[#A9A9A9]"> {infor.matualFriend} bạn chung</Text> */}
+                </View>
+                <TouchableOpacity className="ml-auto mr-1" onPress={handleMoreActionPress}>
+                    <DotMenuIcon/>
+                </TouchableOpacity>
             </View>
-            <TouchableOpacity className="ml-auto mr-1">
-                <DotMenuIcon/>
-            </TouchableOpacity>
-        </View>
         </View>
     )
 }

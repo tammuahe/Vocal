@@ -330,6 +330,7 @@ export default function profile() {
               source={{ uri: profilePicture }}
               contentFit="cover"
               allowDownscaling={true}
+              placeholder={require("@/assets/images/default_avatar.png") }
             />
             {/*image edit button*/}
             <TouchableOpacity

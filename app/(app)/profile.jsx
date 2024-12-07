@@ -315,7 +315,6 @@ export default function profile() {
               <BackIcon
                 width={40}
                 height={40}
-                fill={"#333333"}
                 onPress={handleBack}
               />
             ),

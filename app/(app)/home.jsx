@@ -51,7 +51,6 @@ export default function Home() {
 
   },[user])
 
-  
 
     return (
       <SharedLayout headerTitle="Cuộc trò chuyện" leftIcon={<CreateChatIcon width={32} height={32} fill="#fff"/>}>

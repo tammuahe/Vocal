@@ -156,6 +156,65 @@ export default function ListFriends() {
         return formattedDate;
     }
 
+    const openInbox = (conversationId, listParticipantId) => {
+        router.push({
+            pathname: '/inbox', 
+            params: {
+                conversation_id: conversationId,
+                participants_id: listParticipantId
+            } 
+        })
+      }
+
+    const createConversation = async (friend) =>{ 
+        let commonConversations = null
+        const { data: checkData, error: checkError } = await supabase
+            .from('conversation_participants')
+            .select('conversation_id')
+            .in('participant_id', [user.id, friend.uuid]);
+
+        if (checkError) {
+            console.error('Error:', checkError);
+        } else {
+            const conversationCounts = checkData.reduce((acc, row) => {
+                acc[row.conversation_id] = (acc[row.conversation_id] || 0) + 1;
+                return acc;
+            }, {});
+
+            commonConversations = Object.keys(conversationCounts).filter(
+                (key) => conversationCounts[key] === 2
+            )[0];
+            
+                    
+
+        }
+        
+        if(commonConversations) {
+            openInbox(commonConversations, [user.id, friend.uuid]);
+        }else {
+            const { data: insertData, error} = await supabase
+                .from('conversations')
+                .insert([{}]).select();
+            if(error) {
+                console.error('Supabase error: ', error);
+            }
+            if(insertData) {
+                const conversationId = insertData[0]?.id
+                const {error: c_error } = await supabase
+                .from('conversation_participants')
+                .insert([
+                    {participant_id: user.id, conversation_id: conversationId, is_creator: true},
+                    {participant_id: friend.uuid, conversation_id: conversationId, is_creator: false}
+                ])
+                if(c_error) {
+                    console.error('Supabase error: ', c_error);
+                }else {
+                    openInbox(conversationId, [user.id, friend.uuid]);
+                }
+            }
+        }
+    }
+
     return (
         <SharedLayout headerTitle="Bạn bè" className="h-screen" leftIcon={<UserAddIcon onPress={navigateToAddFriendScreen}/>} showNavBottom={isShowNavBottom} >
                 <View className='flex-1'> 
@@ -203,7 +262,7 @@ export default function ListFriends() {
                     </View>
                     <View className='w-full h-[1px] bg-white'></View>
                     <View className='flex-col items-left py-4 px-6'>
-                        <TouchableOpacity className='flex-row items-center mb-4'>
+                        <TouchableOpacity className='flex-row items-center mb-4' onPress={() => createConversation(friend)}>
                             <MessageIcon />
                             <Text className='ml-2 text-xl text-white'>Nhắn tin cho {friend?.user_name}</Text>
                         </TouchableOpacity>

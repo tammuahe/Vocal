@@ -20,6 +20,7 @@ export default function Inbox() {
     item["participants_id"].split(",")
   );
   const [message, setMessage] = useState("");
+  const [hasAnyMessage, setHasAnyMessage] = useState(false);
   // console.log('conversationId: ', conversationId)
   // console.log('participantUsernames: ',participantUsernames)
   // console.log('participantId: ', participantId)
@@ -41,6 +42,7 @@ export default function Inbox() {
         sender_id: userId,
       });
       console.log("tried to send message");
+      setHasAnyMessage(true);
 
       if (error) {
         console.error("Supabase error:", error);
@@ -50,6 +52,8 @@ export default function Inbox() {
     }
   };
 
+  
+
   return (
     <View className="flex-1 bg-lightblue">
       <LinearGradient className="flex-1" colors={["#FFB9B9", "#A0C8FC"]}>
@@ -57,10 +61,11 @@ export default function Inbox() {
         <InboxHeader
           conversationId={conversationId}
           participantId={participantId}
+          checkMessage={hasAnyMessage}
         />
         <View className="flex-1 justify-between overflow-visible">
           <View className="flex-1 ml-3 mr-4 ">
-            <MessageList conversationId={item["conversation_id"]} />
+            <MessageList conversationId={item["conversation_id"]} anyMessage={(data) => setHasAnyMessage(data)}/>
           </View>
           <View className="pt-2">
             <View

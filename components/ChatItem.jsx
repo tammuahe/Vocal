@@ -173,12 +173,33 @@ export default function ChatItem(item) {
   };
 
   const formatDate = (timestamp) => {
-    const date = new Date(timestamp);
-    return date.toLocaleString();  // Formats as "MM/DD/YYYY, HH:MM:SS AM/PM" (depends on locale)
+    const inputDate = new Date(timestamp);
+    const now = new Date();
+
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfYesterday = new Date(startOfToday.getTime() - 86400000); // Hôm qua
+    const startOfLastWeek = new Date(startOfToday.getTime() - 7 * 86400000); // Tuần trước
+
+    if (inputDate >= startOfToday) {
+        return inputDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    if (inputDate >= startOfYesterday) {
+        return inputDate.toLocaleDateString('vi-VN', { weekday: 'long' });
+    }
+
+    if (inputDate >= startOfLastWeek) {
+        return inputDate.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
+    }
+
+    return inputDate.toLocaleDateString('vi-VN');
   };
 
-
-
+  // console.log({
+  //   conversation_id: item.item.conversation_id,
+  //   participantsUsernames,
+  //   participants_id: participants.flatMap(Object.values)
+  // } );
 
   const openInbox = () => {
     router.push({
@@ -194,7 +215,7 @@ export default function ChatItem(item) {
   return (
    
     <TouchableOpacity 
-    className='flex-row justify-between mx-4 items-center gap-3 mb-4 p-4 border-neutral-950 overflow-hidden bg-white rounded-2xl'
+    className='flex-row justify-between items-center h-[60px] gap-3 mb-2 p-4 border-neutral-950 overflow-hidden bg-white rounded-2xl'
     onPress={() => {openInbox()}}
     > 
         <Image
@@ -212,9 +233,9 @@ export default function ChatItem(item) {
               numberOfLines={1}
               className="font-semibold text-neutral-800"
             >{conversationTitle}</Text>
-                <Text style={{fontSize: hp(1.3)}} className='font-medium text-skyblue'>{lastTime}</Text>
+                <Text style={{fontSize: hp(1.6)}} className='font-medium text-skyblue'>{lastTime}</Text>
             </View>
-            <Text style={{fontSize: hp(1.6)}} className='font-medium text-neutral-500'>{lastMessage}</Text>
+            <Text style={{fontSize: hp(1.8)}} className='font-medium text-neutral-500'>{lastMessage}</Text>
         </View>
     </TouchableOpacity>
   )

@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/authContext'
 
 
-export default function MessageList({conversationId}) {
+export default function MessageList({conversationId, anyMessage}) {
   const [messages, setMessages] = useState([])
   const { user } = useAuth()
 
@@ -22,6 +22,7 @@ export default function MessageList({conversationId}) {
         return;
       }
       if (data) setMessages(data);
+      hasAnyMessage(data);
     };
 
     fetchMessages();
@@ -53,7 +54,14 @@ export default function MessageList({conversationId}) {
     };
   }, [conversationId]);
 
-
+  // Kiểm tra đã có tin nhắn nào trong đoạn chat chưa
+  const hasAnyMessage = (data) => {
+    if(data?.length == 0) {
+      anyMessage(false);
+    }else {
+      anyMessage(true);
+    }
+  }
   // useEffect(() => {
   //   console.log(messages)
   // },[messages])

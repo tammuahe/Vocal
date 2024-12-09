@@ -9,7 +9,7 @@ import { supabase } from '../lib/supabase';
 import { blurhash } from '../utils/common'
 import BackIcon from "../assets/icons/return-back-button-svgrepo-com";
 
-export default function InboxHeader({conversationId, participantUsernames, participantId}) {
+export default function InboxHeader({conversationId, participantUsernames, participantId, checkMessage}) {
     const {user} = useAuth()
     const router = useRouter()
     const [avatarUrl, setAvatarUrl] = useState(null);
@@ -88,12 +88,33 @@ export default function InboxHeader({conversationId, participantUsernames, parti
   }, [participantId]);
 
   const handleBack = () => {
+    handleDeleteConversation();
     router.back();
   };
 
   const handleUserProfile = () => {
     router.push('/profile');
   };
+
+  //Xóa đoạn chat khi không có message nào được gửi đi
+  const handleDeleteConversation = async () => {
+    if(!checkMessage) {
+      const {error: err1} = await supabase
+        .from('conversation_participants')
+        .delete()
+        .eq('conversation_id',conversationId);
+      if(err1) {
+        console.error('Supabase error in table conversation_participants: ', err1);
+      }
+      const {error: err2} = await supabase
+        .from('conversations')
+        .delete()
+        .eq('id',conversationId);
+      if(err2) {
+        console.error('Supabase error in table conversations: ', err2);
+      }
+    }
+  }
   
   return (
     <Stack.Screen

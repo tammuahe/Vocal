@@ -157,9 +157,9 @@ export default function ListFriends() {
     }
 
     return (
-        <SharedLayout headerTitle="Bạn bè" leftIcon={<UserAddIcon onPress={navigateToAddFriendScreen}/>} showNavBottom={isShowNavBottom} >
+        <SharedLayout headerTitle="Bạn bè" className="h-screen" leftIcon={<UserAddIcon onPress={navigateToAddFriendScreen}/>} showNavBottom={isShowNavBottom} >
                 <View className='flex-1'> 
-                    <TextInput className='w-full bg-white rounded-full px-6 py-4 mt-2 text-base' placeholder='Tìm bạn bè'
+                    <TextInput className='w-full bg-white rounded-full px-6 py-4 mt-2 text-base' placeholder='Tìm kiếm bạn bè'
                         value={searchValue} onChangeText={handleChangeSearchInput}
                     />
                     {searchValue == '' && 
@@ -167,12 +167,11 @@ export default function ListFriends() {
                             <Text className='text-white text-3xl font-bold'>{friends?.length} bạn bè</Text>
                         </View>
                     }
-                    <View className='py-4'>
+                    <View className='pb-4'>
                         <FlatList 
                             data={friends}
                             keyExtractor={(item,index) => item.smaller_id}
                             renderItem={({item}) => <FriendItem className="mb-2" infor={item} onMoreActionPress={(data) => handlePressFriendMoreAction(data)}/>}
-                            // nestedScrollEnabled
                         />
                         
                     </View>

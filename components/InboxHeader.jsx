@@ -109,7 +109,6 @@ export default function InboxHeader({conversationId, participantUsernames, parti
               <BackIcon
                 width={40}
                 height={40}
-                fill={"#333333"}
                 onPress={handleBack}
               />
             <FlatList

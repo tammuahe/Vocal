@@ -14,7 +14,7 @@ export default function SharedLayout({ children, headerTitle, leftIcon, showNavB
   const route = useRoute();
   return (
     <SafeAreaView {...res}>
-      <LinearGradient className="h-screen" colors={["#FFB9B9", "#A0C8FC"]}>
+      <LinearGradient className="h-full" colors={["#FFB9B9", "#A0C8FC"]}>
         <HomeHeader
           leftIcon={leftIcon}
           headerTitle={headerTitle}

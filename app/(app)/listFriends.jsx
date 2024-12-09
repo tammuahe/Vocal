@@ -184,9 +184,6 @@ export default function ListFriends() {
             commonConversations = Object.keys(conversationCounts).filter(
                 (key) => conversationCounts[key] === 2
             )[0];
-            
-                    
-
         }
         
         if(commonConversations) {
@@ -213,6 +210,20 @@ export default function ListFriends() {
                 }
             }
         }
+    }
+
+    const handleUnfriend = async (infoFriend) => {
+        const {error} = await supabase
+            .from('friends')
+            .delete()
+            .eq('relation_id', infoFriend.relation_id);
+        if(error) {
+            console.error('Supabase error: ', error);
+        }else {
+            await getListFriends();
+            handlePressFriendMoreAction(null);
+        }
+
     }
 
     return (
@@ -266,7 +277,7 @@ export default function ListFriends() {
                             <MessageIcon />
                             <Text className='ml-2 text-xl text-white'>Nhắn tin cho {friend?.user_name}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity className='flex-row items-center mb-4'>
+                        <TouchableOpacity className='flex-row items-center mb-4' onPress={() => handleUnfriend(infoFriend)}>
                             <UnfriendIcon />
                             <Text className='ml-2 text-xl text-white'>Hủy kết bạn với {friend?.user_name}</Text>
                         </TouchableOpacity>

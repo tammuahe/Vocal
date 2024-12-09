@@ -226,6 +226,19 @@ export default function ListFriends() {
 
     }
 
+    const handleBlockUser = async (infoFriend) => {
+        const {error} = await supabase
+            .from('friends')
+            .update({status: 'blocked', blocker_id: user.id})
+            .eq('relation_id', infoFriend.relation_id);
+        if(error) {
+            console.error('Supabase error: ', error);
+        }else {
+            await getListFriends();
+            handlePressFriendMoreAction(null);
+        } 
+    }
+
     return (
         <SharedLayout headerTitle="Bạn bè" className="h-screen" leftIcon={<UserAddIcon onPress={navigateToAddFriendScreen}/>} showNavBottom={isShowNavBottom} >
                 <View className='flex-1'> 
@@ -281,7 +294,7 @@ export default function ListFriends() {
                             <UnfriendIcon />
                             <Text className='ml-2 text-xl text-white'>Hủy kết bạn với {friend?.user_name}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity className='flex-row items-center mb-4'>
+                        <TouchableOpacity className='flex-row items-center mb-4' onPress={() => handleBlockUser(infoFriend)}>
                             <BlockIcon />
                             <Text className='ml-2 text-xl text-white'>Chặn {friend?.user_name}</Text>
                         </TouchableOpacity>

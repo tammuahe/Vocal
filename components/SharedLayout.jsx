@@ -23,7 +23,7 @@ export default function SharedLayout({ children, headerTitle, leftIcon, showNavB
         <View className="flex-1 px-4">{children}</View>
         {
           showNavBottom && 
-            <SafeAreaView className="h-16 px-4  flex-row items-center bg-[#97D7FF]">
+            <SafeAreaView className="h-16 px-4 flex-row items-center bg-[#97D7FF]">
               <View
                 className={
                   (route.name == "home" ? "border-t border-white " : " ") +
@@ -55,7 +55,11 @@ export default function SharedLayout({ children, headerTitle, leftIcon, showNavB
                   "w-1/3 h-full flex items-center justify-center"
                 }
               >
-                <SettingsIcon />
+                <SettingsIcon onPress={() => {
+                  if(router.name != 'settings') {
+                    router.push('/(app)/settings');
+                  }
+                }}/>
               </View>
             </SafeAreaView>
         }

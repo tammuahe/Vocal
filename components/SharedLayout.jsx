@@ -8,21 +8,30 @@ import { Link, useRouter } from "expo-router";
 import { useRoute } from "@react-navigation/native";
 import React from "react";
 import HomeHeader from "./HomeHeader";
+import { StatusBar } from "expo-status-bar";
+import Constants from "expo-constants";
 
-export default function SharedLayout({ children, headerTitle, leftIcon, showNavBottom = true, ...res }) {
+export default function SharedLayout({
+  children,
+  headerTitle,
+  leftIcon,
+  showNavBottom = true,
+  ...res
+}) {
   const router = useRouter();
   const route = useRoute();
   return (
-    <SafeAreaView {...res}>
+    <SafeAreaView className="flex-1" {...res}>
       <LinearGradient className="h-full" colors={["#FFB9B9", "#A0C8FC"]}>
-        <HomeHeader
-          leftIcon={leftIcon}
-          headerTitle={headerTitle}
-        />
+        <StatusBar style="light" />
+        <SafeAreaView
+          className="flex-1"
+          style={{ marginTop: Constants.statusBarHeight }}
+        >
+          <HomeHeader leftIcon={leftIcon} headerTitle={headerTitle} />
 
-        <View className="flex-1 px-4">{children}</View>
-        {
-          showNavBottom && 
+          <View className="flex-1 px-4">{children}</View>
+          {showNavBottom && (
             <SafeAreaView className="h-16 px-4  flex-row items-center bg-[#97D7FF]">
               <View
                 className={
@@ -38,8 +47,9 @@ export default function SharedLayout({ children, headerTitle, leftIcon, showNavB
               </View>
               <View
                 className={
-                  (route.name == "listFriends" ? "border-t border-white " : " ") +
-                  "w-1/3 h-full flex items-center justify-center"
+                  (route.name == "listFriends"
+                    ? "border-t border-white "
+                    : " ") + "w-1/3 h-full flex items-center justify-center"
                 }
               >
                 <UsersIcon
@@ -58,7 +68,8 @@ export default function SharedLayout({ children, headerTitle, leftIcon, showNavB
                 <SettingsIcon />
               </View>
             </SafeAreaView>
-        }
+          )}
+        </SafeAreaView>
       </LinearGradient>
     </SafeAreaView>
   );

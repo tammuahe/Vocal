@@ -1,104 +1,126 @@
 import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { Image } from 'expo-image';
-import DotMenuIcon from '../assets/icons/dot-menu-more-2-svgrepo-com.svg'
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+import { Image } from "expo-image";
+import DotMenuIcon from "../assets/icons/dot-menu-more-2-svgrepo-com.svg";
 import { useAuth } from "@/context/authContext";
 import { useEffect, useState } from "react";
-import { supabase } from '@/lib/supabase'
+import { supabase } from "@/lib/supabase";
 
+export default function FriendItem({
+  infor,
+  type = "friend",
+  onMoreActionPress,
+  onAcceptFriend,
+  showMoreActionsIcon = true,
+  ...res
+}) {
+  const { user } = useAuth();
+  const [friend, setFriend] = useState({});
+  const [friend_id, setFriend_id] = useState("");
 
-
-export default function FriendItem({infor, type = 'friend', onMoreActionPress, onAcceptFriend, ...res}) {
-    const {user} = useAuth();
-    const [friend, setFriend] = useState({});
-
-    const getInforFriend = async (friend_id) => {
-        const {data, error} = await supabase.
-        from('profiles').select('*').eq('uuid',friend_id);
-        // console.log(data);
-        if(data) {
-            setFriend(data[0]);
-        }else {
-            console.error('Supabase error: ',error);
-        }
+  const getInforFriend = async (friend_id) => {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("uuid", friend_id);
+    // console.log(data);
+    if (data) {
+      setFriend(data[0]);
+    } else {
+      console.error("Supabase error: ", error);
     }
-    
-    useEffect(()=>{
-        const friend_id = infor.smaller_id != user.id ? infor.smaller_id : infor.bigger_id;
-        if(friend_id) {
-            const fetchData = async () => {
-                await getInforFriend(friend_id);
-            }
-            fetchData();
-        }else {
-            console.error('no friend_id')
-        }
-    }, [user])
+  };
 
-    const handleMoreActionPress = () => {
-        onMoreActionPress({friend: friend, infor: infor})
+  useEffect(() => {
+    setFriend_id(
+      infor.smaller_id != user.id ? infor.smaller_id : infor.bigger_id
+    );
+  }, [infor, user]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await getInforFriend(friend_id);
+    };
+    if (friend_id) {
+      fetchData();
     }
+  }, [friend_id]);
 
+  const handleMoreActionPress = () => {
+    onMoreActionPress({ friend: friend, infor: infor });
+  };
 
-    const timeAgo = (time) => {
-        const timestamp = new Date(time).getTime();
-        const now = Date.now(); 
-        const diff = now - timestamp; 
-        
-        const seconds = Math.floor(diff / 1000);
-        const minutes = Math.floor(seconds / 60); 
-        const hours = Math.floor(minutes / 60); 
-        const days = Math.floor(hours / 24); 
-        const months = Math.floor(days / 30); 
-        const years = Math.floor(months / 12);
-    
-        if (seconds < 60) {
-            return `${seconds} giây trước`;
-        } else if (minutes < 60) {
-            return `${minutes} phút trước`;
-        } else if (hours < 24) {
-            return `${hours} giờ trước`;
-        } else if (days < 30) {
-            return `${days} ngày trước`;
-        } else if (months < 12) {
-            return `${months} tháng trước`;
-        } else {
-            return `${years} năm trước`;
-        }
+  const timeAgo = (time) => {
+    const timestamp = new Date(time).getTime();
+    const now = Date.now();
+    const diff = now - timestamp;
+
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const months = Math.floor(days / 30);
+    const years = Math.floor(months / 12);
+
+    if (seconds < 60) {
+      return `${seconds} giây trước`;
+    } else if (minutes < 60) {
+      return `${minutes} phút trước`;
+    } else if (hours < 24) {
+      return `${hours} giờ trước`;
+    } else if (days < 30) {
+      return `${days} ngày trước`;
+    } else if (months < 12) {
+      return `${months} tháng trước`;
+    } else {
+      return `${years} năm trước`;
     }
+  };
 
-    return (
-        <View {...res}>
-            <View className="bg-white w-full h-[60px] rounded-xl px-2 flex-row items-center" >
-                <Image 
-                    source={''} 
-                    style={{height: hp(5), width: hp(5), borderRadius: 100}}
-                    contentFit='contain'
-                    placeholder={require('../assets/images/default_avatar.png')}
-                />
-                <View className="ml-1">
-                    <Text className="text-lg font-semibold"> {friend.user_name}</Text>
-                    {/* <Text className="text-[#A9A9A9]"> {infor.matualFriend} bạn chung</Text> */}
-                    {type == 'pending_friend' &&
-                        <Text className="text-[#949393]"> {timeAgo(infor.sent_at)}</Text>
-                    }
-                </View>
-                {type == 'friend' && 
-                    <TouchableOpacity className="ml-auto mr-1" onPress={handleMoreActionPress}>
-                        <DotMenuIcon/>
-                    </TouchableOpacity>
-                }
-                {type == 'stranger' && 
-                    <TouchableOpacity className="ml-auto mr-1">
-                        <Text className="text-[#00AAFF]">Kết bạn</Text>
-                    </TouchableOpacity>
-                }
-                {type == 'pending_friend' && 
-                    <TouchableOpacity className="ml-auto mr-1" onPress={onAcceptFriend}>
-                        <Text className="text-[#00AAFF]">Chấp nhận</Text>
-                    </TouchableOpacity>
-                }
-            </View>
+  return (
+    <View {...res}>
+      <View className="bg-white w-full h-[60px] rounded-xl px-2 flex-row items-center">
+        <Image
+          source={""}
+          style={{ height: hp(5), width: hp(5), borderRadius: 100 }}
+          contentFit="contain"
+          placeholder={require("../assets/images/default_avatar.png")}
+        />
+        <View className="ml-1">
+          <Text className="text-lg font-semibold"> {friend.user_name}</Text>
+          {/* <Text className="text-[#A9A9A9]"> {infor.matualFriend} bạn chung</Text> */}
+          {type == "pending_friend" && (
+            <Text className="text-[#949393]"> {timeAgo(infor.sent_at)}</Text>
+          )}
         </View>
-    )
+        {showMoreActionsIcon && (
+          <View className="ml-auto mr-1">
+            {type == "friend" && (
+              <TouchableOpacity
+                
+                onPress={handleMoreActionPress}
+              >
+                <DotMenuIcon />
+              </TouchableOpacity>
+            )}
+            {type == "stranger" && (
+              <TouchableOpacity>
+                <Text className="text-[#00AAFF]">Kết bạn</Text>
+              </TouchableOpacity>
+            )}
+            {type == "pending_friend" && (
+              <TouchableOpacity
+                onPress={onAcceptFriend}
+              >
+                <Text className="text-[#00AAFF]">Chấp nhận</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
+      </View>
+    </View>
+  );
 }

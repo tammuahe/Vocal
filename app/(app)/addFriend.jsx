@@ -1,12 +1,11 @@
-import {View, Text,TextInput, FlatList} from 'react-native';
-import SharedLayout from '@/components/SharedLayout';
-import ReturnBackIcon from '../../assets/icons/return-back-button-svgrepo-com-light.svg';
-import { useRouter } from 'expo-router';
-import { supabase } from '@/lib/supabase'
-import { useEffect, useState } from 'react';
+import { View, Text, TextInput, FlatList } from "react-native";
+import SharedLayout from "@/components/SharedLayout";
+import ReturnBackIcon from "../../assets/icons/return-back-button-svgrepo-com-light.svg";
+import { useRouter } from "expo-router";
+import { supabase } from "@/lib/supabase";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/context/authContext";
-import FriendItem from '../../components/FriendItem';
-
+import FriendItem from "../../components/FriendItem";
 
 export default function AddFriend() {
     const router = useRouter();
@@ -44,18 +43,20 @@ export default function AddFriend() {
         }
     }
 
-    const acceptInvitatinon = async (relation_id) => {
-        console.log(relation_id);
-        if(relation_id) {
-            const {error} = await supabase.from('friends').update({status: 'friend'}).eq('relation_id', relation_id)
-            if(error) {
-                console.error('Supabase error: ',error)
-            }else {
-                await getListFriendInvitations();
-            }
-        }else {
-            console.error('no relation_id');
-        }
+  const acceptInvitatinon = async (relation_id) => {
+    console.log(relation_id);
+    if (relation_id) {
+      const { error } = await supabase
+        .from("friends")
+        .update({ status: "friend" })
+        .eq("relation_id", relation_id);
+      if (error) {
+        console.error("Supabase error: ", error);
+      } else {
+        await getListFriendInvitations();
+      }
+    } else {
+      console.error("no relation_id");
     }
 
     const handleSendFriendReq = async (friend_id) => {
@@ -134,4 +135,4 @@ export default function AddFriend() {
             </View>
         </SharedLayout>
     )
-}
+}}

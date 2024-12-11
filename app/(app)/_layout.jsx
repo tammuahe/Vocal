@@ -1,13 +1,17 @@
-import React from 'react'
-import { Stack } from 'expo-router'
-import { AuthContextProvider } from '@/context/authContext';
-import HomeHeader from '@/components/HomeHeader.jsx';
-import { MenuProvider } from 'react-native-popup-menu';
+import React from "react";
+import { Stack } from "expo-router";
+import { AuthContextProvider } from "@/context/authContext";
+import { MenuProvider } from "react-native-popup-menu";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function _layout() {
-    return (
-      <AuthContextProvider>
-        <MenuProvider>
+  return (
+    
+    <AuthContextProvider>
+      <MenuProvider>
+      <GestureHandlerRootView className="flex-1">
+        <SafeAreaProvider>
           <Stack>
             <Stack.Screen name='home' options={{headerShown: false}}/>
             <Stack.Screen name='addFriend' options={{headerShown: false} }/>
@@ -18,7 +22,10 @@ export default function _layout() {
             <Stack.Screen name='listSentFriendRequest' options={{headerShown: false} }/>
             <Stack.Screen name='listBlockUser' options={{headerShown: false} }/>
           </Stack>
-        </MenuProvider>
-      </AuthContextProvider>
-    ) 
+        </SafeAreaProvider>
+        </GestureHandlerRootView>
+      </MenuProvider>
+    </AuthContextProvider>
+
+  );
 }

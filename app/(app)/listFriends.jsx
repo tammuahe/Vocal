@@ -30,7 +30,6 @@ import ModalApp from '../../components/Modal';
 
 const { height } = Dimensions.get("window"); // Lấy chiều cao màn hình
 
-
 export default function ListFriends() {
     const router = useRouter();
     const  { logout, user } = useAuth();
@@ -72,34 +71,34 @@ export default function ListFriends() {
         })
       ).current;
 
-    const getListFriends = async () => {
-        try {
-            const {data, error} = await supabase
-            .from('friends')
-            .select('*').eq('status', 'friend')
-            if(error) {
-                console.error('Supabase error: ', error);
-            }else {
-                setFriends(data);
-            }
-        }catch(err) {
-            console.error('Unexpected error:', err);
-        }
+  const getListFriends = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("friends")
+        .select("*")
+        .eq("status", "friend");
+      if (error) {
+        console.error("Supabase error: ", error);
+      } else {
+        setFriends(data);
+      }
+    } catch (err) {
+      console.error("Unexpected error:", err);
     }
+  };
 
-    useEffect(()=>{
-        const fetchData = async () => {
-            await getListFriends();
-        }
-        if(user) {
-            fetchData();
-        }
-    }, [user])
-
-    const navigateToAddFriendScreen = () => {
-        router.push('/(app)/addFriend')
+  useEffect(() => {
+    const fetchData = async () => {
+      await getListFriends();
+    };
+    if (user) {
+      fetchData();
     }
+  }, [user]);
 
+  const navigateToAddFriendScreen = () => {
+    router.push("/(app)/addFriend");
+  };
 
     const searchFriendByUsername = async (user_name) => {
         if (user_name !== '') {
@@ -120,10 +119,10 @@ export default function ListFriends() {
         }
     };
 
-    const handleChangeSearchInput = async (value) => {
-        setSearchValue(value);
-        await searchFriendByUsername(value); 
-    };
+  const handleChangeSearchInput = async (value) => {
+    setSearchValue(value);
+    await searchFriendByUsername(value);
+  };
 
     const handlePressFriendMoreAction = (data) => {
         if(data != null) {
@@ -146,40 +145,40 @@ export default function ListFriends() {
         }
     }
 
-    const converDateToString = (dateStr) => {
-        const date = new Date(dateStr);
+  const converDateToString = (dateStr) => {
+    const date = new Date(dateStr);
 
-        const month = date.getMonth() + 1; 
-        const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
 
-        const formattedDate = `tháng ${month} năm ${year}`;
-        return formattedDate;
-    }
+    const formattedDate = `tháng ${month} năm ${year}`;
+    return formattedDate;
+  };
 
-    const openInbox = (conversationId, listParticipantId) => {
-        router.push({
-            pathname: '/inbox', 
-            params: {
-                conversation_id: conversationId,
-                participants_id: listParticipantId
-            } 
-        })
-      }
+  const openInbox = (conversationId, listParticipantId) => {
+    router.push({
+      pathname: "/inbox",
+      params: {
+        conversation_id: conversationId,
+        participants_id: listParticipantId,
+      },
+    });
+  };
 
-    const createConversation = async (friend) =>{ 
-        let commonConversations = null
-        const { data: checkData, error: checkError } = await supabase
-            .from('conversation_participants')
-            .select('conversation_id')
-            .in('participant_id', [user.id, friend.uuid]);
+  const createConversation = async (friend) => {
+    let commonConversations = null;
+    const { data: checkData, error: checkError } = await supabase
+      .from("conversation_participants")
+      .select("conversation_id")
+      .in("participant_id", [user.id, friend.uuid]);
 
-        if (checkError) {
-            console.error('Error:', checkError);
-        } else {
-            const conversationCounts = checkData.reduce((acc, row) => {
-                acc[row.conversation_id] = (acc[row.conversation_id] || 0) + 1;
-                return acc;
-            }, {});
+    if (checkError) {
+      console.error("Error:", checkError);
+    } else {
+      const conversationCounts = checkData.reduce((acc, row) => {
+        acc[row.conversation_id] = (acc[row.conversation_id] || 0) + 1;
+        return acc;
+      }, {});
 
             commonConversations = Object.keys(conversationCounts).filter(
                 (key) => conversationCounts[key] === 2

@@ -9,13 +9,23 @@ import { Link, useRouter } from "expo-router";
 import { useRoute } from "@react-navigation/native";
 import React from "react";
 import HomeHeader from "./HomeHeader";
+import { StatusBar } from "expo-status-bar";
+import Constants from "expo-constants";
 
-export default function SharedLayout({ children, headerTitle, leftIcon, showNavBottom = true, ...res }) {
+export default function SharedLayout({
+  children,
+  headerTitle,
+  leftIcon,
+  showNavBottom = true,
+  ...res
+}) {
   const router = useRouter();
   const route = useRoute();
   return (
     // <View {...res}>
-      <LinearGradient className="flex-1" style={{flex: 1}} colors={["#FFB9B9", "#A0C8FC"]}>
+    <LinearGradient className="flex-1" colors={["#FFB9B9", "#A0C8FC"]}>
+        <StatusBar style="light" />
+        <SafeAreaView className="flex-1">
         <HomeHeader
           leftIcon={leftIcon}
           headerTitle={headerTitle}
@@ -23,7 +33,7 @@ export default function SharedLayout({ children, headerTitle, leftIcon, showNavB
 
         <View className="flex-1 px-4">{children}</View>
         {
-          showNavBottom && 
+          showNavBottom && (
             <SafeAreaView>
               <View className="absolute left-0 bottom-0 h-16 px-4 flex-row items-center bg-[#97D7FF]">
                 <View
@@ -65,7 +75,9 @@ export default function SharedLayout({ children, headerTitle, leftIcon, showNavB
                 </View>
               </View>
             </SafeAreaView>
+          )
         }
+        </SafeAreaView>
       </LinearGradient>
     // </View>
   );

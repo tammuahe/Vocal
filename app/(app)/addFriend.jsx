@@ -59,9 +59,10 @@ export default function AddFriend() {
     }
 
     const handleSendFriendReq = async (friend_id) => {
+        console.log();
         const req = {
-            smaller_id: friend_id, 
-            bigger_id: user.id, 
+            smaller_id: friend_id < user.id ? friend_id : user.id, 
+            bigger_id: friend_id < user.id ? user.id : friend_id, 
             sender_id: user.id, 
             status: 'pending'
         }

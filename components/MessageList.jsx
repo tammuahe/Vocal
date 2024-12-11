@@ -1,8 +1,9 @@
-import { View, Text, FlatList } from 'react-native'
+import { View, Text, FlatList, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import InboxBubble from './InboxBubble'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/authContext'
+import { FlashList } from '@shopify/flash-list'
 
 
 export default function MessageList({conversationId, anyMessage}) {
@@ -75,7 +76,8 @@ export default function MessageList({conversationId, anyMessage}) {
 // },[user])
 
   return (
-    <FlatList
+    <FlashList
+    estimatedItemSize={77}
       inverted
       data={[...messages].reverse()}
       showsVerticalScrollIndicator={false}

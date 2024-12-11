@@ -54,9 +54,9 @@ export default function HomeHeader({ leftIcon, headerTitle }) {
     fetchAvatar();
   }, [user]);
 
-  useEffect(() => {
-    console.log("avatarUrl", avatarUrl);
-  }, [avatarUrl]);
+  // useEffect(() => {
+  //   console.log("avatarUrl", avatarUrl);
+  // }, [avatarUrl]);
 
   const handleProfile = () => {
     router.push("/profile");
@@ -67,9 +67,8 @@ export default function HomeHeader({ leftIcon, headerTitle }) {
   };
 
   return (
-    <SafeAreaView className="p-5 flex-row justify-between pb-6 shadow">
-      <StatusBar />
-      
+    <View className="p-5 flex-row justify-between pb-6 shadow" >
+      <StatusBar style="light" />
       {leftIcon}
 
       <Text style={{ fontSize: hp(3) }} className="font-medium text-neutral-50">
@@ -124,7 +123,7 @@ export default function HomeHeader({ leftIcon, headerTitle }) {
           </MenuOptions>
         </Menu>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 

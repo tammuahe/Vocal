@@ -8,7 +8,7 @@ import { supabase } from '@/lib/supabase'
 
 
 
-export default function FriendItem({infor, type = 'friend', onMoreActionPress, onAcceptFriend, ...res}) {
+export default function FriendItem({infor, type = 'friend', onMoreActionPress, onAcceptFriend, onSendFriendReq, onCancelSentReq, ...res}) {
     const {user} = useAuth();
     const [friend, setFriend] = useState({});
 
@@ -79,7 +79,7 @@ export default function FriendItem({infor, type = 'friend', onMoreActionPress, o
                 <View className="ml-1">
                     <Text className="text-lg font-semibold"> {friend.user_name}</Text>
                     {/* <Text className="text-[#A9A9A9]"> {infor.matualFriend} bạn chung</Text> */}
-                    {type == 'pending_friend' &&
+                    {type == 'pending_friend' || type == 'sent_request' &&
                         <Text className="text-[#949393]"> {timeAgo(infor.sent_at)}</Text>
                     }
                 </View>
@@ -89,7 +89,7 @@ export default function FriendItem({infor, type = 'friend', onMoreActionPress, o
                     </TouchableOpacity>
                 }
                 {type == 'stranger' && 
-                    <TouchableOpacity className="ml-auto mr-1">
+                    <TouchableOpacity className="ml-auto mr-1" onPress={onSendFriendReq}>
                         <Text className="text-[#00AAFF]">Kết bạn</Text>
                     </TouchableOpacity>
                 }
@@ -98,6 +98,12 @@ export default function FriendItem({infor, type = 'friend', onMoreActionPress, o
                         <Text className="text-[#00AAFF]">Chấp nhận</Text>
                     </TouchableOpacity>
                 }
+                {type == 'sent_request' && 
+                    <TouchableOpacity className="ml-auto mr-1" onPress={onCancelSentReq}>
+                        <Text className="text-[#ccc]">Hủy</Text>
+                    </TouchableOpacity>
+                }
+                
             </View>
         </View>
     )

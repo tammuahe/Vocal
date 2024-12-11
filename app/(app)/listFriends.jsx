@@ -245,9 +245,12 @@ export default function ListFriends() {
                     <TextInput className='w-full bg-white rounded-full px-6 py-4 mt-2 text-base' placeholder='Tìm kiếm bạn bè'
                         value={searchValue} onChangeText={handleChangeSearchInput}
                     />
+                    
                     {searchValue == '' && 
-                        <View className='py-4'>
-                            <Text className='text-white text-3xl font-bold'>{friends?.length} bạn bè</Text>
+                        <View className='py-4 flex-row items-center justify-between'>
+                            <Text className='text-white text-3xl font-bold flex-1'>{friends?.length} bạn bè 
+                            </Text>
+                            <Text className='text-sm text-[#00AAFF]' onPress={()=>router.push('/(app)/listSentFriendRequest')}>Xem lời mời đã gửi</Text>
                         </View>
                     }
                     <View className='pb-4'>

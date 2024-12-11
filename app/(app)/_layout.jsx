@@ -15,6 +15,7 @@ export default function _layout() {
             <Stack.Screen name='settings' options={{headerShown: false} }/>
             <Stack.Screen name='notifyAndSound' options={{headerShown: false} }/>
             <Stack.Screen name='privacyAndSecurity' options={{headerShown: false} }/>
+            <Stack.Screen name='listSentFriendRequest' options={{headerShown: false} }/>
           </Stack>
         </MenuProvider>
       </AuthContextProvider>

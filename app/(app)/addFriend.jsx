@@ -12,6 +12,7 @@ export default function AddFriend() {
     const router = useRouter();
     const  { user } = useAuth();
     const [friendInvitations, setFriendInvitations] = useState([]);
+    const [strangers, setStrangers] = useState([]);
 
     const getListFriendInvitations = async () => {
         const {data, error} = await supabase
@@ -23,6 +24,23 @@ export default function AddFriend() {
             console.error('Supabase error: ', error);
         }else {
             setFriendInvitations(data)
+        }
+    }
+
+    const getListStrangers = async () => {
+        try {
+            const { data, error } = await supabase
+              .rpc('get_strangers', { current_user_id: user.id });
+        
+            if (error) {
+              console.error('Error fetching strangers:', error);
+              setStrangers([]);
+            }
+        
+            setStrangers(data);
+        } catch (err) {
+            console.error('Error:', err);
+            setStrangers([]);
         }
     }
 
@@ -40,12 +58,33 @@ export default function AddFriend() {
         }
     }
 
+    const handleSendFriendReq = async (friend_id) => {
+        const req = {
+            smaller_id: friend_id, 
+            bigger_id: user.id, 
+            sender_id: user.id, 
+            status: 'pending'
+        }
+        const {error} = await supabase
+            .from('friends')
+            .insert([{...req}]);
+        if(error) {
+            console.error("Supabase error: ", error);
+            return;
+        }
+        getListStrangers();
+    }
+
     useEffect(() => {
         const fetchData = async () => {
             await getListFriendInvitations();
         }
+        const fetchStrangerData = async () => {
+            await getListStrangers();
+        }
         if(user) {
             fetchData();
+            fetchStrangerData();
         }
     }, [user])
 
@@ -56,7 +95,7 @@ export default function AddFriend() {
                 <TextInput className='w-full bg-white rounded-full px-6 py-4 mt-2 text-base' placeholder='Tìm kiếm'/>
                 {friendInvitations.length > 0 &&
                     (<View>
-                       <Text className='py-4 text-3xl text-white font-bold'>{friendInvitations.length} lời mời kết bạn mới</Text>
+                       <Text className='py-4 text-2xl text-white font-bold'>{friendInvitations.length} lời mời kết bạn mới</Text>
     
                         <FlatList 
                             data={friendInvitations}
@@ -66,6 +105,25 @@ export default function AddFriend() {
                                                         infor={item} 
                                                         type='pending_friend' 
                                                         onAcceptFriend={() => acceptInvitatinon(item.relation_id)}
+                                                    />
+                                        }
+                        />
+                            
+                    </View>
+                    )
+                }
+                {strangers.length > 0 &&
+                    (<View>
+                       <Text className='py-4 text-2xl text-white font-bold'>Những người bạn có thể biết</Text>
+    
+                        <FlatList 
+                            data={strangers}
+                            keyExtractor={(item,index) => item.uuid}
+                            renderItem={({item}) => <FriendItem 
+                                                        className="mb-2" 
+                                                        infor={{...item, smaller_id: item.uuid}} 
+                                                        type='stranger' 
+                                                        onSendFriendReq={() => handleSendFriendReq(item.uuid)}
                                                     />
                                         }
                         />

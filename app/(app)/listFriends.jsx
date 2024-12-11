@@ -2,7 +2,6 @@ import React, { Component, useEffect, useRef, useState } from 'react'
 import { 
     Alert,
     Button, 
-    SafeAreaView, 
     Text, 
     View, 
     TextInput, 
@@ -14,6 +13,8 @@ import {
     Pressable,
     TouchableOpacity, 
 } from 'react-native'
+     
+import {SafeAreaView,} from 'react-native-safe-area-context'
 import { Image } from 'expo-image';
 import { useAuth } from "@/context/authContext";
 import SharedLayout from '@/components/SharedLayout'
@@ -25,6 +26,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import MessageIcon from '../../assets/icons/message-circle-dots-svgrepo-com.svg'
 import UnfriendIcon from '../../assets/icons/unfriend-svgrepo-com.svg'
 import BlockIcon from '../../assets/icons/block-1-svgrepo-com.svg'
+import ModalApp from '../../components/Modal';
 
 const { height } = Dimensions.get("window"); // Lấy chiều cao màn hình
 
@@ -37,7 +39,7 @@ export default function ListFriends() {
     const [friend, setFriend] = useState({});
     const [searchValue, setSearchValue] = useState('');
     const [isShowNavBottom, setIsShowNavBottom] = useState(true);
-    const translateY = useRef(new Animated.Value(400)).current;
+    const translateY = useRef(new Animated.Value(420)).current;
     const panResponder = useRef(
         PanResponder.create({
           onStartShouldSetPanResponder: () => true,
@@ -102,18 +104,16 @@ export default function ListFriends() {
     const searchFriendByUsername = async (user_name) => {
         if (user_name !== '') {
             const { data, error } = await supabase
-                .from('profiles')
-                .select('uuid')
-                .like('user_name', `%${user_name}%`); 
+                .rpc('search_friends_by_name', {current_user_id: user.id, search_name: user_name});
             if (data) {
                 const searchFriends = data
-                .filter(item => item.uuid != user.id)
                 .map(item => ({
                     smaller_id: item.uuid
                 }));
                 setFriends(searchFriends);
             } else {
                 console.error('Supabase error: ', error);
+                setFriends([]);
             }
         } else {
             await getListFriends(); 
@@ -133,7 +133,7 @@ export default function ListFriends() {
         setIsShowNavBottom(!isShowNavBottom)
         if(!isShowNavBottom) {
             Animated.timing(translateY, {
-                toValue: 400, 
+                toValue: 420, 
                 duration: 200, 
                 useNativeDriver: true,
                 }).start();
@@ -212,6 +212,14 @@ export default function ListFriends() {
         }
     }
 
+    const [isvisibleUnfriend,setIsvisibleUnfriend] = useState(false)
+    function openModalUnfriend () {
+        setIsvisibleUnfriend(true);
+    }   
+    function closeModalUnfriend() {
+        setIsvisibleUnfriend(false);
+    }
+
     const handleUnfriend = async (infoFriend) => {
         const {error} = await supabase
             .from('friends')
@@ -221,9 +229,18 @@ export default function ListFriends() {
             console.error('Supabase error: ', error);
         }else {
             await getListFriends();
+            closeModalUnfriend();
             handlePressFriendMoreAction(null);
         }
 
+    }
+
+    const [isvisibleBlockUser,setIsvisibleBlockUser] = useState(false)
+    function openModalBlockUser () {
+        setIsvisibleBlockUser(true);
+    }   
+    function closeModalBlockUser() {
+        setIsvisibleBlockUser(false);
     }
 
     const handleBlockUser = async (infoFriend) => {
@@ -235,12 +252,13 @@ export default function ListFriends() {
             console.error('Supabase error: ', error);
         }else {
             await getListFriends();
+            closeModalBlockUser();
             handlePressFriendMoreAction(null);
         } 
     }
 
     return (
-        <SharedLayout headerTitle="Bạn bè" className="h-screen" leftIcon={<UserAddIcon onPress={navigateToAddFriendScreen}/>} showNavBottom={isShowNavBottom} >
+        <SharedLayout headerTitle="Bạn bè" leftIcon={<UserAddIcon onPress={navigateToAddFriendScreen}/>} showNavBottom={isShowNavBottom} >
                 <View className='flex-1'> 
                     <TextInput className='w-full bg-white rounded-full px-6 py-4 mt-2 text-base' placeholder='Tìm kiếm bạn bè'
                         value={searchValue} onChangeText={handleChangeSearchInput}
@@ -253,7 +271,7 @@ export default function ListFriends() {
                             <Text className='text-sm text-[#00AAFF]' onPress={()=>router.push('/(app)/listSentFriendRequest')}>Xem lời mời đã gửi</Text>
                         </View>
                     }
-                    <View className='pb-4'>
+                    <View className={searchValue && 'py-4'}>
                         <FlatList 
                             data={friends}
                             keyExtractor={(item,index) => item.smaller_id}
@@ -293,16 +311,26 @@ export default function ListFriends() {
                             <MessageIcon />
                             <Text className='ml-2 text-xl text-white'>Nhắn tin cho {friend?.user_name}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity className='flex-row items-center mb-4' onPress={() => handleUnfriend(infoFriend)}>
+                        <TouchableOpacity className='flex-row items-center mb-4' onPress={openModalUnfriend}>
                             <UnfriendIcon />
                             <Text className='ml-2 text-xl text-white'>Hủy kết bạn với {friend?.user_name}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity className='flex-row items-center mb-4' onPress={() => handleBlockUser(infoFriend)}>
+                        <TouchableOpacity className='flex-row items-center mb-4' onPress={openModalBlockUser}>
                             <BlockIcon />
                             <Text className='ml-2 text-xl text-white'>Chặn {friend?.user_name}</Text>
                         </TouchableOpacity>
                     </View>
                 </Animated.View>
+                <ModalApp isvisible={isvisibleUnfriend} onClose={closeModalUnfriend} onConfirm={() => handleUnfriend(infoFriend)}>
+                    <View className="w-[200px] h-26">
+                        <Text className="text-center text-2xl">Bạn có chắc chắn muốn hủy kết bạn với {friend.user_name}?</Text>
+                    </View>
+                </ModalApp>
+                <ModalApp isvisible={isvisibleBlockUser} onClose={closeModalBlockUser} onConfirm={() => handleBlockUser(infoFriend)} confirmText='Chặn'>
+                    <View className="w-[200px] h-26">
+                        <Text className="text-center text-2xl">Bạn có chắc chắn muốn chặn {friend.user_name}?</Text>
+                    </View>
+                </ModalApp>
         </SharedLayout>
     )
 

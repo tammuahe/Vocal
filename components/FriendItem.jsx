@@ -8,7 +8,7 @@ import { supabase } from '@/lib/supabase'
 
 
 
-export default function FriendItem({infor, type = 'friend', onMoreActionPress, onAcceptFriend, onSendFriendReq, onCancelSentReq, ...res}) {
+export default function FriendItem({infor, type = 'friend', onMoreActionPress, onAcceptFriend, onSendFriendReq, onCancelSentReq, onUnBlock, ...res}) {
     const {user} = useAuth();
     const [friend, setFriend] = useState({});
 
@@ -101,6 +101,11 @@ export default function FriendItem({infor, type = 'friend', onMoreActionPress, o
                 {type == 'sent_request' && 
                     <TouchableOpacity className="ml-auto mr-1" onPress={onCancelSentReq}>
                         <Text className="text-[#ccc]">Hủy</Text>
+                    </TouchableOpacity>
+                }
+                {type == 'blocked' && 
+                    <TouchableOpacity className="ml-auto mr-1" onPress={onUnBlock}>
+                        <Text className="text-[#00AAFF]">Bỏ chặn</Text>
                     </TouchableOpacity>
                 }
                 

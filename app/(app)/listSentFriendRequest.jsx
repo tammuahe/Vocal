@@ -89,7 +89,7 @@ export default function ListFriends() {
                                                         className="mb-2" 
                                                         infor={item} 
                                                         type='sent_request' 
-                                                        onSendFriendReq={() => handleCancelSentReqest(item.relation_id)}
+                                                        onCancelSentReq={() => handleCancelSentReqest(item.relation_id)}
                                                     />
                                         }
                         />

@@ -300,7 +300,7 @@ export default function profile() {
   };
   return (
     <CustomKeyboardView>
-      <LinearGradient className="h-screen" colors={["#FFB9B9", "#A0C8FC"]}>
+      <LinearGradient className="flex-1" style={{flex: 1}} colors={["#FFB9B9", "#A0C8FC"]}>
         <Stack.Screen
           options={{
             title: "",

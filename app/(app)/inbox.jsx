@@ -10,6 +10,7 @@ import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../context/authContext";
 import { LinearGradient } from "expo-linear-gradient";
 import SendIcon from '@/assets/icons/send-svgrepo-com.svg'
+import CustomKeyboardView from "../../components/CustomKeyboardView";
 
 export default function Inbox() {
   const { user } = useAuth();
@@ -55,8 +56,9 @@ export default function Inbox() {
   
 
   return (
+    <CustomKeyboardView>
     <View className="flex-1 bg-lightblue">
-      <LinearGradient className="flex-1" colors={["#FFB9B9", "#A0C8FC"]}>
+      <LinearGradient style={{flex: 1}} className="flex-1" colors={["#FFB9B9", "#A0C8FC"]}>
         <StatusBar style="dark" />
         <InboxHeader
           conversationId={conversationId}
@@ -93,5 +95,6 @@ export default function Inbox() {
         </View>
       </LinearGradient>
     </View>
+    </CustomKeyboardView>
   );
 }

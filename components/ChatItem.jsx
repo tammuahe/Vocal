@@ -201,6 +201,10 @@ export default function ChatItem(item) {
   //   participants_id: participants.flatMap(Object.values)
   // } );
 
+  function openBottonSheet() {
+    console.log('check');
+  }
+
   const openInbox = () => {
     router.push({
       pathname: '/inbox', 
@@ -217,6 +221,7 @@ export default function ChatItem(item) {
     <TouchableOpacity 
     className='flex-row justify-between items-center h-[60px] gap-3 mb-2 p-4 border-neutral-950 overflow-hidden bg-white rounded-2xl'
     onPress={() => {openInbox()}}
+    onLongPress={() => {openBottonSheet()}}
     > 
         <Image
             source={conversationImage}
@@ -235,7 +240,7 @@ export default function ChatItem(item) {
             >{conversationTitle}</Text>
                 <Text style={{fontSize: hp(1.6)}} className='font-medium text-skyblue'>{lastTime}</Text>
             </View>
-            <Text style={{fontSize: hp(1.8)}} className='font-medium text-neutral-500'>{lastMessage}</Text>
+            <Text style={{fontSize: hp(1.8)}} ellipsizeMode="tail" numberOfLines={1} className='font-medium text-neutral-500'>{lastMessage}</Text>
         </View>
     </TouchableOpacity>
   )

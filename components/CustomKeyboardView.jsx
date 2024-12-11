@@ -1,14 +1,14 @@
 import React from 'react'
-import {  KeyboardAvoidingView, ScrollView, Platform } from 'react-native'
+import {  KeyboardAvoidingView, ScrollView, Platform, View } from 'react-native'
 const ios = Platform.OS == 'ios'
 export default function CustomKeyboardView({children}){
     return (
         <KeyboardAvoidingView
             behavior={ios? 'padding':'height'}
             style={{ flex: 1 }}
-            keyboardVerticalOffset={50}
+            keyboardVerticalOffset={80}
         >
-            <ScrollView
+            <View
                 style={{flex:1}}
                 bounces={false}
                 showsVerticalScrollIndicator={false}
@@ -18,7 +18,7 @@ export default function CustomKeyboardView({children}){
                     children
                 }
 
-            </ScrollView>
+            </View>
         </KeyboardAvoidingView>
     )
 }

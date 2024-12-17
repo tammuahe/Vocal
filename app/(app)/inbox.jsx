@@ -6,8 +6,9 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
+  Keyboard,
 } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import InboxHeader from "../../components/InboxHeader";
@@ -17,13 +18,10 @@ import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../context/authContext";
 import { LinearGradient } from "expo-linear-gradient";
 import SendIcon from "@/assets/icons/send-svgrepo-com.svg";
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Dimensions } from "react-native";
 
-const ios = Platform.OS == "ios";
+const ios = Platform.OS === "ios";
 
 export default function Inbox() {
   const insets = useSafeAreaInsets();
@@ -36,12 +34,36 @@ export default function Inbox() {
   );
   const [message, setMessage] = useState("");
   const [hasAnyMessage, setHasAnyMessage] = useState(false);
+  const [keyboardOffset, setKeyboardOffset] = useState(0);
 
-  const { height: screenHeight, width: screenWidth } = Dimensions.get("window");
+  const { height: screenHeight } = Dimensions.get("window");
+
+  useEffect(() => {
+    const onKeyboardShow = (event) => {
+      setKeyboardOffset(91);
+    };
+
+    const onKeyboardHide = () => {
+      setKeyboardOffset(0);
+    };
+
+    const showListener = Keyboard.addListener(
+      "keyboardDidShow",
+      onKeyboardShow
+    );
+    const hideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      onKeyboardHide
+    );
+
+    return () => {
+      showListener.remove();
+      hideListener.remove();
+    };
+  }, []);
 
   const handleSendMessage = async () => {
     const messageText = message.trim();
-    console.log("messageText: ", messageText);
     setMessage("");
     if (!messageText) {
       return;
@@ -65,16 +87,25 @@ export default function Inbox() {
   };
 
   return (
-    <SafeAreaView style={{height:screenHeight-hp(6)}}>
-      <LinearGradient className="flex-1" colors={["#FFB9B9", "#A0C8FC"]}>
-        <KeyboardAvoidingView style={{ flex: 1 }} keyboardVerticalOffset={90} behavior={ios ? 'height' : 'padding'}>
+    <SafeAreaView
+      style={{ height: screenHeight - hp(6) }}
+    >
+      <LinearGradient
+        className="absolute bottom-0 top-0 left-0 right-0"
+        colors={["#FFB9B9", "#A0C8FC"]}
+      >
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          keyboardVerticalOffset={keyboardOffset}
+          behavior={ios ? "padding" : "height"}
+        >
           <StatusBar style="dark" />
           <InboxHeader
             conversationId={conversationId}
             participantId={participantId}
             checkMessage={hasAnyMessage}
           />
-          <View className="flex-1 ml-3 my-4 mb-3">
+          <View className="flex-1 pl-3 my-4 pb-3">
             <MessageList
               conversationId={item["conversation_id"]}
               anyMessage={(data) => setHasAnyMessage(data)}

@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView, Text, TouchableOpacity, View, Platform } from "react-native";
 import { useAuth } from "@/context/authContext";
 import {
   widthPercentageToDP as wp,
@@ -26,6 +26,10 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import FriendItem from "@/components/FriendItem";
 import CreateChatUserList from "@/components/CreateChatUserList";
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
+import * as Device from 'expo-device';
+
 export default function Home() {
   const [chats, setChats] = useState([]);
   const sheetRef = useRef(null);
@@ -33,6 +37,89 @@ export default function Home() {
   const [friends, setFriends] = useState({});
   const conversationName = useRef("");
   const [newChatParticipantList, setNewChatParticipantList] = useState([]);
+  const [expoPushToken, setExpoPushToken] = useState('');
+    const [notification, setNotification] = useState(
+      undefined
+    );
+    const notificationListener = useRef();
+    const responseListener = useRef();
+  
+
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+    }),
+  });
+
+  function handleRegistrationError(errorMessage) {
+    alert(errorMessage);
+    console.error(errorMessage);
+  }
+
+  async function registerForPushNotificationsAsync() {
+    if (Platform.OS === 'android') {
+      Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+    }
+  
+    if (Device.isDevice) {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') {
+        handleRegistrationError('Vui lòng cấp quyền để hiển thị thông báo!');
+        return;
+      }
+      const projectId =
+        Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
+      if (!projectId) {
+        handleRegistrationError('Không tìm thấy ID project');
+      }
+      try {
+        const pushTokenString = (
+          await Notifications.getExpoPushTokenAsync({
+            projectId,
+          })
+        ).data;
+        console.log(pushTokenString);
+        return pushTokenString;
+      } catch (e) {
+        handleRegistrationError(`${e}`);
+      }
+    } else {
+      handleRegistrationError('Vui lòng sử dụng thiết bị vật lí.');
+    }
+  }
+
+  useEffect(() => {
+      registerForPushNotificationsAsync()
+        .then(token => setExpoPushToken(token ?? ''))
+        .catch((error) => setExpoPushToken(`${error}`));
+  
+      notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+        setNotification(notification);
+      });
+  
+      responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+        console.log(response);
+      });
+  
+      return () => {
+        notificationListener.current &&
+          Notifications.removeNotificationSubscription(notificationListener.current);
+        responseListener.current &&
+          Notifications.removeNotificationSubscription(responseListener.current);
+      };
+    }, []);
 
   useEffect(() => {
     // Subscribe to real-time updates
@@ -264,13 +351,6 @@ export default function Home() {
               borderLeftColor: "white",
             }}
             placeholder="Tên nhóm"
-            placeholderTextColor={"#A9A9A9"}
-          />
-        </View>
-        <View className="rounded-full bg-white mx-7 mb-2">
-          <TextInput
-            className="pl-5"
-            placeholder="Tên người dùng"
             placeholderTextColor={"#A9A9A9"}
           />
         </View>

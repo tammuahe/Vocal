@@ -105,7 +105,7 @@ export default function Inbox() {
             participantId={participantId}
             checkMessage={hasAnyMessage}
           />
-          <View className="flex-1 pl-3 my-4 pb-3">
+          <View className="flex-1 px-3 my-4 pb-3">
             <MessageList
               conversationId={item["conversation_id"]}
               anyMessage={(data) => setHasAnyMessage(data)}

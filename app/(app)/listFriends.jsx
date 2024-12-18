@@ -97,7 +97,7 @@ export default function ListFriends() {
   }, [user]);
 
   const navigateToAddFriendScreen = () => {
-    router.push("/(app)/addFriend");
+    router.push("/addFriend");
   };
 
     const searchFriendByUsername = async (user_name) => {

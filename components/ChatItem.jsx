@@ -7,6 +7,7 @@ import {
 import { Image } from "expo-image";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "expo-router";
+import { blurhash } from "@/utils/common";
 export default function ChatItem(item) {
   const [conversationImage, setConversationImage] = useState();
   const [participants, setParticipants] = useState([]);
@@ -50,7 +51,7 @@ export default function ChatItem(item) {
   };
 
   useEffect(() => {
-    getParticipants()
+    getParticipants();
     fetchConversationName();
     getConversationsPicture();
 
@@ -101,7 +102,7 @@ export default function ChatItem(item) {
       console.error("Unexpected error:", err);
     }
   };
-  
+
   const getParticipants = async () => {
     try {
       //console.log('getParticipants called');
@@ -121,7 +122,9 @@ export default function ChatItem(item) {
     }
   };
 
-  useEffect(()=>{getParticipantsUsernames(participants)},[participants])
+  useEffect(() => {
+    getParticipantsUsernames(participants);
+  }, [participants]);
   const getParticipantsUsernames = async (userIds) => {
     try {
       // Use Promise.all to fetch all usernames concurrently
@@ -132,17 +135,17 @@ export default function ChatItem(item) {
             .select("user_name")
             .eq("uuid", userId.participant_id)
             .single();
-  
+
           if (error) {
             console.error("Supabase error:", error);
             return null;
           }
-  
+
           return data?.user_name;
         })
       );
-        const uniqueUsernames = [...new Set(usernames.filter(Boolean))];
-  
+      const uniqueUsernames = [...new Set(usernames.filter(Boolean))];
+
       setParticipantsUsernames((prev) => {
         return [...new Set([...prev, ...uniqueUsernames])];
       });
@@ -150,7 +153,7 @@ export default function ChatItem(item) {
       console.error("Unexpected error:", err);
     }
   };
-  
+
   const formatDate = (timestamp) => {
     const inputDate = new Date(timestamp);
     const now = new Date();
@@ -206,7 +209,7 @@ export default function ChatItem(item) {
         source={conversationImage}
         style={{ height: hp(5), width: hp(5), borderRadius: 100 }}
         contentFit="contain"
-        placeholder={require("../assets/images/default-conversation.png")}
+        placeholder={{blurhash}}
       />
       <View className="flex-1 gap-1">
         <View className="flex-row justify-between">
@@ -216,7 +219,9 @@ export default function ChatItem(item) {
             numberOfLines={1}
             className="font-semibold text-neutral-800"
           >
-            {conversationTitle ? conversationTitle : participantsUsernames.join(', ')}
+            {conversationTitle
+              ? conversationTitle
+              : participantsUsernames.join(", ")}
           </Text>
           <Text
             style={{ fontSize: hp(1.6) }}
